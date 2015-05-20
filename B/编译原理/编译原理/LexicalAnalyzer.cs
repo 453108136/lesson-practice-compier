@@ -333,6 +333,15 @@ namespace compiler
                                 tokenList[countColum,1] = attrva;
                                 tokenList[countColum,2] = line.ToString();
                                 tokenList[countColum,3] = (col - coun).ToString();
+                                if(SymbolTable.Table.ContainsKey(attrva))
+                                {
+                                    SymbolTable.Table[attrva].AddFirst(new Symbol(attrva, "identifiers", line, col - coun));
+                                }else
+                                {
+                                    LinkedList<Symbol> linkedList =  new LinkedList<Symbol>();
+                                    linkedList.AddFirst(new Symbol(attrva, "identifiers", line, col - coun));
+                                    SymbolTable.Table.Add(attrva, linkedList);
+                                }
                                 countColum++;
                                 state = 0;
                                 coun = 0;

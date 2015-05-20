@@ -61,9 +61,9 @@ namespace compiler
             button3_Click(sender, e);
             string file = textBox1.Text;
             LexicalAnalyzer.input = new StreamReader(file);
-            string fileOut = @"C:\Users\Administrator.WIN-I4CR061GMDC\Desktop\text.txt";
+            string fileOut = @"C:\text.txt";
             LexicalAnalyzer.output = new StreamWriter(fileOut);
-            string errorOut = @"C:\Users\Administrator.WIN-I4CR061GMDC\Desktop\error.txt";
+            string errorOut = @"C:\error.txt";
             LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             LexicalAnalyzer.tokenListReset();
