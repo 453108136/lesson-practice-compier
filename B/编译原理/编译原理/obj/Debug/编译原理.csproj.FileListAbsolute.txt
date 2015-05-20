@@ -1,0 +1,9 @@
+c:\users\administrator.win-i4cr061gmdc\documents\visual studio 2012\Projects\编译原理\编译原理\bin\Debug\编译原理.exe.config
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\bin\Debug\编译原理.exe
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\bin\Debug\编译原理.pdb
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.csprojResolveAssemblyReference.cache
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.Form1.resources
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.Properties.Resources.resources
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.csproj.GenerateResource.Cache
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.exe
+C:\Users\Administrator.WIN-I4CR061GMDC\Documents\Visual Studio 2012\Projects\编译原理\编译原理\obj\Debug\编译原理.pdb
