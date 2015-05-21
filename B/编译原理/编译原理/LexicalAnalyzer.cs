@@ -28,6 +28,11 @@ namespace compiler
             countColum = 0;
         }
 
+        public static void erListReset()
+        {
+            countColumError = 0;
+        }
+
         private bool isExistKeywords(string a)
         {
             int i;
@@ -84,6 +89,7 @@ namespace compiler
             string attrva = "";
             int coun = 0;
             Error.reset();
+            
             for (int i =0;i<str.Length;i++)
             {
                 switch (state)
@@ -107,9 +113,9 @@ namespace compiler
                         else if (ch == '+' || ch == '-' || ch == '*')
                         {
                             attrva = ch.ToString();
-                            Token token = new Token("operators", ch.ToString(), line, col - coun);
+                            Token token = new Token(ch.ToString(), ch.ToString(), line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "operators";
+                            tokenList[countColum, 0] = ch.ToString();
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -123,9 +129,9 @@ namespace compiler
                         else if (isExistDelimiters(ch.ToString()))
                         {
                             attrva = ch.ToString();
-                            Token token = new Token("delimiters", ch.ToString(), line, col - coun);
+                            Token token = new Token(ch.ToString(), ch.ToString(), line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "delimiters";
+                            tokenList[countColum,0] = ch.ToString();
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -159,7 +165,7 @@ namespace compiler
                             erList[countColumError, 0] = a.ErrorNo.ToString();
                             erList[countColumError, 1] = a.Message;
                             erList[countColumError, 2] = line.ToString();
-                            erList[countColumError, 3] = (col - coun).ToString();
+                            erList[countColumError, 3] = (col-coun).ToString();
                             countColumError++;
                             state = 0;
                             coun = 0;
@@ -174,9 +180,9 @@ namespace compiler
                         { state = 2; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("operators", attrva, line, col - coun);
+                            Token token = new Token(attrva, attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "operators";
+                            tokenList[countColum,0] = attrva;
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -189,9 +195,9 @@ namespace compiler
                         break;
 
                     case 2:
-                        Token token1 = new Token("operators", attrva, line, col - coun);
+                        Token token1 = new Token(attrva, attrva, line, col - coun);
                         output.Write(token1.Tokentype + " '" + token1.Attributevalue + "' linenumber:" + token1.Linenumber + " lineposition:" + token1.Lineposition + '\n');
-                        tokenList[countColum,0] = "operators";
+                        tokenList[countColum,0] = attrva;
                         tokenList[countColum,1] = attrva;
                         tokenList[countColum,2] = line.ToString();
                         tokenList[countColum,3] = (col - coun).ToString();
@@ -208,9 +214,9 @@ namespace compiler
                         { state = 4; position += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("operators", attrva, line, col - coun);
+                            Token token = new Token(attrva, attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "operators";
+                            tokenList[countColum,0] = attrva;
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -223,9 +229,9 @@ namespace compiler
                         break;
 
                     case 4:
-                        Token token2 = new Token("operators", attrva, line, col - coun);
+                        Token token2 = new Token(attrva, attrva, line, col - coun);
                         output.Write(token2.Tokentype + " '" + token2.Attributevalue + "' linenumber:" + token2.Linenumber + " lineposition:" + token2.Lineposition + '\n');
-                        tokenList[countColum,0] = "operators";
+                        tokenList[countColum,0] = attrva;
                         tokenList[countColum,1] = attrva;
                         tokenList[countColum,2] = line.ToString();
                         tokenList[countColum,3] = (col - coun).ToString();
@@ -242,9 +248,9 @@ namespace compiler
                         { state = 6; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("operators", attrva, line, col - coun);
+                            Token token = new Token(attrva, attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "operators";
+                            tokenList[countColum,0] = attrva;
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -257,9 +263,9 @@ namespace compiler
                         break;
 
                     case 6:
-                        Token token3 = new Token("operators", attrva, line, col - coun);
+                        Token token3 = new Token(attrva, attrva, line, col - coun);
                         output.Write(token3.Tokentype + " '" + token3.Attributevalue + "' linenumber:" + token3.Linenumber + " lineposition:" + token3.Lineposition + '\n');
-                        tokenList[countColum,0] = "operators";
+                        tokenList[countColum,0] = attrva;
                         tokenList[countColum,1] = attrva;
                         tokenList[countColum,2] = line.ToString();
                         tokenList[countColum,3] = (col - coun).ToString();
@@ -292,9 +298,9 @@ namespace compiler
                         break;
 
                     case 8:
-                        Token token4 = new Token("operators", attrva, line, col - coun);
+                        Token token4 = new Token(attrva, attrva, line, col - coun);
                         output.Write(token4.Tokentype + " '" + token4.Attributevalue + "' linenumber:" + token4.Linenumber + " lineposition:" + token4.Lineposition + '\n');
-                        tokenList[countColum,0] = "operators";
+                        tokenList[countColum,0] = attrva;
                         tokenList[countColum,1] = attrva;
                         tokenList[countColum,2] = line.ToString();
                         tokenList[countColum,3] = (col - coun).ToString();
@@ -327,19 +333,19 @@ namespace compiler
                             }
                             else
                             {
-                                Token token = new Token("identifiers", attrva, line, col - coun);
+                                Token token = new Token("identifier", attrva, line, col - coun);
                                 output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                                tokenList[countColum,0] = "identifiers";
+                                tokenList[countColum,0] = "identifier";
                                 tokenList[countColum,1] = attrva;
                                 tokenList[countColum,2] = line.ToString();
                                 tokenList[countColum,3] = (col - coun).ToString();
                                 if(SymbolTable.Table.ContainsKey(attrva))
                                 {
-                                    SymbolTable.Table[attrva].AddFirst(new Symbol(attrva, "identifiers", line, col - coun));
+                                    SymbolTable.Table[attrva].AddFirst(new Symbol(attrva, "identifier", line, col - coun));
                                 }else
                                 {
                                     LinkedList<Symbol> linkedList =  new LinkedList<Symbol>();
-                                    linkedList.AddFirst(new Symbol(attrva, "identifiers", line, col - coun));
+                                    linkedList.AddFirst(new Symbol(attrva, "identifier", line, col - coun));
                                     SymbolTable.Table.Add(attrva, linkedList);
                                 }
                                 countColum++;
@@ -361,9 +367,9 @@ namespace compiler
                         { state = 13; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("numbers", attrva, line, col - coun);
+                            Token token = new Token("number", attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "numbers";
+                            tokenList[countColum,0] = "number";
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -404,9 +410,9 @@ namespace compiler
                         { state = 13; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("numbers", attrva, line, col - coun);
+                            Token token = new Token("number", attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "numbers";
+                            tokenList[countColum,0] = "number";
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -468,9 +474,9 @@ namespace compiler
                         { state = 15; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("numbers", attrva, line, col - coun);
+                            Token token = new Token("number", attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "numbers";
+                            tokenList[countColum,0] = "number";
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();
@@ -488,9 +494,9 @@ namespace compiler
                         { state = 17; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                         else
                         {
-                            Token token = new Token("operators", attrva, line, col - coun);
+                            Token token = new Token("/", attrva, line, col - coun);
                             output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                            tokenList[countColum,0] = "operators";
+                            tokenList[countColum,0] = "/";
                             tokenList[countColum,1] = attrva;
                             tokenList[countColum,2] = line.ToString();
                             tokenList[countColum,3] = (col - coun).ToString();

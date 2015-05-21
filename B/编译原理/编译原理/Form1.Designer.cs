@@ -96,15 +96,16 @@
             // 
             this.listView1.Location = new System.Drawing.Point(446, 81);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(309, 399);
+            this.listView1.Size = new System.Drawing.Size(309, 190);
             this.listView1.TabIndex = 7;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 562);
+            this.ClientSize = new System.Drawing.Size(802, 562);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);

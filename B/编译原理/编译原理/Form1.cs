@@ -59,6 +59,7 @@ namespace compiler
         private void button4_Click(object sender, EventArgs e)
         {
             button3_Click(sender, e);
+            LexicalAnalyzer.errorList.Clear();
             string file = textBox1.Text;
             LexicalAnalyzer.input = new StreamReader(file);
             string fileOut = @"C:\text.txt";
@@ -67,10 +68,12 @@ namespace compiler
             LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             LexicalAnalyzer.tokenListReset();
+            LexicalAnalyzer.erListReset();
             lex.isToken();
             LexicalAnalyzer.input.Close();
             LexicalAnalyzer.output.Close();
             LexicalAnalyzer.errorOutput.Close();
+            this.listView1.Clear();
             if(LexicalAnalyzer.errorList.Count == 0)
             {
                 //StreamReader fil = new StreamReader(fileOut);
@@ -99,7 +102,6 @@ namespace compiler
                 //StreamReader fil = new StreamReader(errorOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                //LexicalAnalyzer.errorList.Clear();
                 listView1.Columns.Add("errorNumber", 70);
                 listView1.Columns.Add("message", 70);
                 listView1.Columns.Add("lineNumber", 70);
@@ -118,6 +120,12 @@ namespace compiler
                     this.listView1.Items.Add(li);
                 }
             }
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int c =  listView1.SelectedItems[0].Index;
+            c = c;
         }
     }
 }
