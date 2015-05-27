@@ -14,7 +14,6 @@ namespace compiler
         public static Dictionary<string, Dictionary<string, int>> Table
         {
             get { return LLparser.table; }
-            set { LLparser.table = value; }
         }
 
         static LLparser()
