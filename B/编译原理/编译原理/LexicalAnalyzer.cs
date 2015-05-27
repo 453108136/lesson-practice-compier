@@ -90,7 +90,7 @@ namespace compiler
             else return false;         
         }
 
-        public void isToken()
+        public Token nextToken()
         {
             int state = 0;
             string str="";
@@ -104,8 +104,7 @@ namespace compiler
             string attrva = "";
             int coun = 0;
             Error.reset();
-            
-
+           
             for (int i =0;i<str.Length;i++)
             {
                 if (position < str.Length)
@@ -143,6 +142,7 @@ namespace compiler
                                 col += 1;
                                 position += 1;
                                 attrva = "";
+                                return token;
                             }
                             else if (isExistDelimiters(ch.ToString()))
                             {
@@ -159,6 +159,7 @@ namespace compiler
                                 col += 1;
                                 position += 1;
                                 attrva = "";
+                                return token;
                             }
                             else if (ch == ' ')
                             {
@@ -189,6 +190,8 @@ namespace compiler
                                 coun = 0;
                                 position += 1;
                                 col += 1;
+                                Token b = new Token("error", a.Message, line, col - coun);
+                                return b ;
                             }
                             break;
 
@@ -209,6 +212,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -224,7 +228,7 @@ namespace compiler
                             coun = 0;
                             attrva = "";
                             i--;
-                            break;
+                            return token1;
 
                         case 3:
                             ch = str[position];
@@ -243,6 +247,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -258,7 +263,7 @@ namespace compiler
                             coun = 0;
                             attrva = "";
                             i--;
-                            break;
+                            return token2;
 
                         case 5:
                             ch = str[position];
@@ -277,6 +282,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -292,7 +298,7 @@ namespace compiler
                             coun = 0;
                             attrva = "";
                             i--;
-                            break;
+                            return token3;
 
                         case 7:
                             ch = str[position];
@@ -312,6 +318,8 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                Token b = new Token("error", a.Message, line, col - coun);
+                                return b;
                             }
                             break;
 
@@ -327,7 +335,7 @@ namespace compiler
                             coun = 0;
                             attrva = "";
                             i--;
-                            break;
+                            return token4;
 
                         case 9:
                             ch = str[position];
@@ -337,9 +345,9 @@ namespace compiler
                             {
                                 if (isExistKeywords(attrva))
                                 {
-                                    Token token = new Token("keywords", attrva, line, col - coun);
+                                    Token token = new Token(attrva, attrva, line, col - coun);
                                     output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\n');
-                                    tokenList[countColum, 0] = "keywords";
+                                    tokenList[countColum, 0] = attrva;
                                     tokenList[countColum, 1] = attrva;
                                     tokenList[countColum, 2] = line.ToString();
                                     tokenList[countColum, 3] = (col - coun).ToString();
@@ -348,6 +356,7 @@ namespace compiler
                                     coun = 0;
                                     attrva = "";
                                     i--;
+                                    return token;
                                 }
                                 else
                                 {
@@ -372,6 +381,7 @@ namespace compiler
                                     coun = 0;
                                     attrva = "";
                                     i--;
+                                    return token;
                                 }
                             }
                             break;
@@ -397,6 +407,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -418,6 +429,8 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                Token b = new Token("error", a.Message, line, col - coun);
+                                return b;
                             }
                             break;
 
@@ -440,6 +453,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -463,6 +477,8 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                Token b = new Token("error", a.Message, line, col - coun);
+                                return b;
                             }
                             break;
 
@@ -484,6 +500,8 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                Token b = new Token("error", a.Message, line, col - coun);
+                                return b;
                             }
                             break;
 
@@ -504,6 +522,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -524,6 +543,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             break;
 
@@ -542,6 +562,7 @@ namespace compiler
                                 coun = 0;
                                 attrva = "";
                                 i--;
+                                return token;
                             }
                             else
                             { state = 17; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
@@ -551,12 +572,10 @@ namespace compiler
                 else
                 {
                     code = -1;
-                }
-                if (state == -1)
-                {
                     break;
                 }
             }
+            return null;
         }
     }
 }

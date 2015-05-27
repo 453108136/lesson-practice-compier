@@ -78,7 +78,7 @@ namespace compiler
             LexicalAnalyzer lex = new LexicalAnalyzer();
             LexicalAnalyzer.tokenListReset();
             LexicalAnalyzer.erListReset();
-            lex.isToken();
+            lex.nextToken();
             string str = "";
             while (!LexicalAnalyzer.input.EndOfStream)
             {
