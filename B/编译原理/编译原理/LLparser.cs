@@ -8,8 +8,8 @@ namespace compiler
 {
     static class LLparser
     {
-        static LinkedList<string>[] Rules = new LinkedList<string>[28];
-        static Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
+        static private LinkedList<string>[] Rules = new LinkedList<string>[28];
+        static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
 
         public static Dictionary<string, Dictionary<string, int>> Table
         {
@@ -17,7 +17,7 @@ namespace compiler
             set { LLparser.table = value; }
         }
 
-        static public void make()
+        static LLparser()
         {
             init();
             createTable();
@@ -66,7 +66,7 @@ namespace compiler
             return true;
         }
 
-        static public void createTable(){
+        static private void createTable(){
             for (int i = 0; i < 28; i++)
             {
                 string terminator = Rules[i].First.Value;
