@@ -13,6 +13,8 @@ namespace compiler
 {
     public partial class Form1 : Form
     {
+        static private Stack<TreeNode> treeStack = new Stack<TreeNode>();
+        static private TreeNode root;
         public Form1()
         {
             InitializeComponent();
@@ -35,7 +37,7 @@ namespace compiler
 
         private void button2_Click(object sender, EventArgs e)
         {
-            listView1.Clear();
+            lexicalView.Clear();
             string file = textBox1.Text;
             if (file != "")
             {
@@ -47,14 +49,14 @@ namespace compiler
             {
                 MessageBox.Show("NO FILES SELECTED！");
             }
-            listView1.Columns.Add("tokenType", 70);
-            listView1.Columns.Add("attributeValue", 70);
-            listView1.Columns.Add("lineNumber", 70);
-            listView1.Columns.Add("linePosition", 70);
-            listView1.GridLines = true;
-            listView1.View = View.Details;
-            listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
-            listView1.FullRowSelect = true;
+            lexicalView.Columns.Add("tokenType", 70);
+            lexicalView.Columns.Add("attributeValue", 70);
+            lexicalView.Columns.Add("lineNumber", 70);
+            lexicalView.Columns.Add("linePosition", 70);
+            lexicalView.GridLines = true;
+            lexicalView.View = View.Details;
+            lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            lexicalView.FullRowSelect = true;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -78,7 +80,7 @@ namespace compiler
             LexicalAnalyzer lex = new LexicalAnalyzer();
             LexicalAnalyzer.tokenListReset();
             LexicalAnalyzer.erListReset();
-            lex.nextToken();
+            Token token = lex.nextToken();
             string str = "";
             while (!LexicalAnalyzer.input.EndOfStream)
             {
@@ -103,7 +105,7 @@ namespace compiler
                     li.SubItems.Add(LexicalAnalyzer.tokenList[a,1]);
                     li.SubItems.Add(LexicalAnalyzer.tokenList[a,2]);
                     li.SubItems.Add(LexicalAnalyzer.tokenList[a,3]);
-                    this.listView1.Items.Add(li);
+                    this.lexicalView.Items.Add(li);
                 }
             }
             else
@@ -111,15 +113,15 @@ namespace compiler
                 //StreamReader fil = new StreamReader(errorOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                this.listView1.Clear();
-                listView1.Columns.Add("errorNumber", 70);
-                listView1.Columns.Add("message", 70);
-                listView1.Columns.Add("lineNumber", 70);
-                listView1.Columns.Add("linePosition", 70);
-                listView1.GridLines = true;
-                listView1.View = View.Details;
-                listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
-                listView1.FullRowSelect = true;
+                this.lexicalView.Clear();
+                lexicalView.Columns.Add("errorNumber", 70);
+                lexicalView.Columns.Add("message", 70);
+                lexicalView.Columns.Add("lineNumber", 70);
+                lexicalView.Columns.Add("linePosition", 70);
+                lexicalView.GridLines = true;
+                lexicalView.View = View.Details;
+                lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
+                lexicalView.FullRowSelect = true;
                 for (int a = 0; a < LexicalAnalyzer.countColum; a++)
                 {
                     ListViewItem li = new ListViewItem();
@@ -127,27 +129,84 @@ namespace compiler
                     li.SubItems.Add(LexicalAnalyzer.erList[a, 1]);
                     li.SubItems.Add(LexicalAnalyzer.erList[a, 2]);
                     li.SubItems.Add(LexicalAnalyzer.erList[a, 3]);
-                    this.listView1.Items.Add(li);
+                    this.lexicalView.Items.Add(li);
                 }
+            }
+
+            if(token != null && token.Tokentype!="error")
+            {
+                string symbol = LLparser.Stack.Peek();
+                if (LLparser.isTerminator(symbol))
+                {
+                    TreeNode newNode = new TreeNode(symbol);
+                    treeStack.Peek().Nodes.Add(newNode);
+                    if (symbol != token.Tokentype)
+                    {
+                        MessageBox.Show("Wrong token type!");
+                    }
+                    LLparser.Stack.Pop();
+                }
+                else
+                {
+
+                    while (!LLparser.isTerminator(symbol))
+                    {
+                        if (LLparser.Table[symbol].ContainsKey(token.Tokentype))
+                        {
+                            TreeNode newNode = new TreeNode(symbol);
+                            if (treeStack.Count == 0)
+                            {
+                                treeStack.Push(newNode);
+                                root = treeStack.Peek();
+                            }
+                            else
+                            {
+                                treeStack.Peek().Nodes.Add(newNode);
+                                treeStack.Push(newNode);
+                            }
+                            LLparser.Stack.Pop();
+                            LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
+                            symbol = LLparser.Stack.Peek();
+                            if (symbol == "")
+                            {
+                                newNode = new TreeNode(symbol);
+                                treeStack.Peek().Nodes.Add(newNode);
+                                LLparser.Stack.Pop();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Wrong token type!");
+                            break;
+                        }
+                    }
+                    TreeNode lastNode = new TreeNode(symbol);
+                    treeStack.Peek().Nodes.Add(lastNode);
+                    treeStack.Push(lastNode);
+                    LLparser.Stack.Pop();
+                    treeStack.Pop();
+                }
+                syntaxTreeView.Nodes.Clear();
+                syntaxTreeView.Nodes.Add(root);
             }
         }
 
-        private void radioButton1_Click(object sender, EventArgs e)
+        private void lexical_Click(object sender, EventArgs e)
         {
-            if (radioButton1.Checked)
+            if (lexical.Checked)
             {
-                listView1.Visible = true;
-                richTextBox2.Visible = false;
+                lexicalView.Visible = true;
+                syntaxTreeView.Visible = false;
                 richTextBox3.Visible = false;
             }
         }
 
-        private void radioButton2_Click(object sender, EventArgs e)
+        private void syntax_Click(object sender, EventArgs e)
         {
-            if (radioButton2.Checked)
+            if (syntax.Checked)
             {
-                listView1.Visible = false;
-                richTextBox2.Visible = true;
+                lexicalView.Visible = false;
+                syntaxTreeView.Visible = true;
                 richTextBox3.Visible = false;
             }
         }
@@ -156,8 +215,8 @@ namespace compiler
         {
             if (radioButton3.Checked)
             {
-                listView1.Visible = false;
-                richTextBox2.Visible = true;
+                lexicalView.Visible = false;
+                syntaxTreeView.Visible = true;
                 richTextBox3.Visible = false;
             }
         }
@@ -166,16 +225,22 @@ namespace compiler
         {
             LexicalAnalyzer.tokenListClear();
             LexicalAnalyzer.tokenClear();
-            this.listView1.Clear();
-            listView1.Columns.Add("tokenType", 70);
-            listView1.Columns.Add("attributeValue", 70);
-            listView1.Columns.Add("lineNumber", 70);
-            listView1.Columns.Add("linePosition", 70);
-            listView1.GridLines = true;
-            listView1.View = View.Details;
-            listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
-            listView1.FullRowSelect = true;
+            this.lexicalView.Clear();
+            lexicalView.Columns.Add("tokenType", 70);
+            lexicalView.Columns.Add("attributeValue", 70);
+            lexicalView.Columns.Add("lineNumber", 70);
+            lexicalView.Columns.Add("linePosition", 70);
+            lexicalView.GridLines = true;
+            lexicalView.View = View.Details;
+            lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            lexicalView.FullRowSelect = true;
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
 
         /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {

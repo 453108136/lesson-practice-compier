@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace compiler
 {
@@ -10,6 +11,13 @@ namespace compiler
     {
         static private LinkedList<string>[] Rules = new LinkedList<string>[28];
         static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
+        static private Stack<string> stack = new Stack<string>();
+
+        public static Stack<string> Stack
+        {
+            get { return LLparser.stack; }
+            set { LLparser.stack = value; }
+        }
 
         public static Dictionary<string, Dictionary<string, int>> Table
         {
@@ -52,9 +60,26 @@ namespace compiler
             Rules[25] = new LinkedList<string>(); Rules[25].AddLast("simpleexpr"); Rules[25].AddLast("identifier");
             Rules[26] = new LinkedList<string>(); Rules[26].AddLast("simpleexpr"); Rules[26].AddLast("number");
             Rules[27] = new LinkedList<string>(); Rules[27].AddLast("simpleexpr"); Rules[27].AddLast("("); Rules[27].AddLast("arithexpr"); Rules[27].AddLast(")");
+            Stack.Push("$");
+            Stack.Push("program");
+
         }
 
-        static private bool isTerminator(string type)
+        static public void pushStack (int rulesNo)
+        {
+            pushNode(Rules[rulesNo].First.Next);
+        }
+
+        static private void pushNode(LinkedListNode<string> node)
+        {
+            if (node.Next != null)
+            {
+                pushNode(node.Next);
+            }
+            stack.Push(node.Value);
+        }
+
+        static public bool isTerminator(string type)
         {
             for(int i=0;i<28;i++){
                 if (type == Rules[i].First.Value)
