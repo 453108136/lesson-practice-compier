@@ -17,6 +17,7 @@ namespace compiler
         {
             InitializeComponent();
         }
+        public int size;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -46,6 +47,14 @@ namespace compiler
             {
                 MessageBox.Show("NO FILES SELECTED！");
             }
+            listView1.Columns.Add("tokenType", 70);
+            listView1.Columns.Add("attributeValue", 70);
+            listView1.Columns.Add("lineNumber", 70);
+            listView1.Columns.Add("linePosition", 70);
+            listView1.GridLines = true;
+            listView1.View = View.Details;
+            listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
+            listView1.FullRowSelect = true;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -70,23 +79,23 @@ namespace compiler
             LexicalAnalyzer.tokenListReset();
             LexicalAnalyzer.erListReset();
             lex.isToken();
+            string str = "";
+            while (!LexicalAnalyzer.input.EndOfStream)
+            {
+                str += LexicalAnalyzer.input.ReadLine() + '\n';
+            }
             LexicalAnalyzer.input.Close();
             LexicalAnalyzer.output.Close();
             LexicalAnalyzer.errorOutput.Close();
-            this.listView1.Clear();
+            if (LexicalAnalyzer.code == -1)
+            {
+                MessageBox.Show("There are no more Tokens!");
+            }
             if(LexicalAnalyzer.errorList.Count == 0)
             {
                 //StreamReader fil = new StreamReader(fileOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                listView1.Columns.Add("tokenType", 70);
-                listView1.Columns.Add("attributeValue", 70);
-                listView1.Columns.Add("lineNumber", 70);
-                listView1.Columns.Add("linePosition", 70);
-                listView1.GridLines = true;
-                listView1.View = View.Details;
-                listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
-                listView1.FullRowSelect = true;
                 for (int a = 0; a < LexicalAnalyzer.countColum; a++)
                 {
                     ListViewItem li = new ListViewItem();
@@ -102,6 +111,7 @@ namespace compiler
                 //StreamReader fil = new StreamReader(errorOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
+                this.listView1.Clear();
                 listView1.Columns.Add("errorNumber", 70);
                 listView1.Columns.Add("message", 70);
                 listView1.Columns.Add("lineNumber", 70);
@@ -122,10 +132,40 @@ namespace compiler
             }
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void radioButton1_Click(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                listView1.Visible = true;
+                richTextBox2.Visible = false;
+                richTextBox3.Visible = false;
+            }
+        }
+
+        private void radioButton2_Click(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                listView1.Visible = false;
+                richTextBox2.Visible = true;
+                richTextBox3.Visible = false;
+            }
+        }
+
+        private void radioButton3_Click(object sender, EventArgs e)
+        {
+            if (radioButton3.Checked)
+            {
+                listView1.Visible = false;
+                richTextBox2.Visible = true;
+                richTextBox3.Visible = false;
+            }
+        }
+
+        /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int c =  listView1.SelectedItems[0].Index;
             c = c;
-        }
+        }*/
     }
 }
