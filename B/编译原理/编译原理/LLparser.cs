@@ -6,11 +6,24 @@ using System.Threading.Tasks;
 
 namespace compiler
 {
-    class LLparser
+    static class LLparser
     {
-        /*const LinkedList<string>[] Rules = new LinkedList<string>[28];
+        static LinkedList<string>[] Rules = new LinkedList<string>[28];
+        static Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
 
-        public void init()
+        public static Dictionary<string, Dictionary<string, int>> Table
+        {
+            get { return LLparser.table; }
+            set { LLparser.table = value; }
+        }
+
+        static public void make()
+        {
+            init();
+            createTable();
+        }
+
+        private static void init()
         {
             Rules[0] = new LinkedList<string>(); Rules[0].AddLast("program"); Rules[0].AddLast("compoundstmt");
             Rules[1] = new LinkedList<string>(); Rules[1].AddLast("stmt"); Rules[1].AddLast("ifstmt");
@@ -22,7 +35,7 @@ namespace compiler
             Rules[7] = new LinkedList<string>(); Rules[7].AddLast("stmts"); Rules[7].AddLast("");
             Rules[8] = new LinkedList<string>(); Rules[8].AddLast("ifstmt"); Rules[8].AddLast("if"); Rules[8].AddLast("("); Rules[8].AddLast("boolexpt"); Rules[8].AddLast(")"); Rules[8].AddLast("then"); Rules[8].AddLast("stmt"); Rules[8].AddLast("else"); Rules[8].AddLast("stmt");
             Rules[9] = new LinkedList<string>(); Rules[9].AddLast("whilestmt"); Rules[9].AddLast("while"); Rules[9].AddLast("("); Rules[9].AddLast("boolexpr"); Rules[9].AddLast(")"); Rules[9].AddLast("stmt");
-            Rules[10] = new LinkedList<string>(); Rules[10].AddLast("assgstmt"); Rules[10].AddLast("identifier"); Rules[10].AddLast("="); Rules[10].AddLast("arithexpr"); Rules[10].AddLast(";")
+            Rules[10] = new LinkedList<string>(); Rules[10].AddLast("assgstmt"); Rules[10].AddLast("identifier"); Rules[10].AddLast("="); Rules[10].AddLast("arithexpr"); Rules[10].AddLast(";");
             Rules[11] = new LinkedList<string>(); Rules[11].AddLast("boolexpr"); Rules[11].AddLast("arithexpr"); Rules[11].AddLast("boolop"); Rules[11].AddLast("arithexpr");
             Rules[12] = new LinkedList<string>(); Rules[12].AddLast("boolop"); Rules[12].AddLast("<");
             Rules[13] = new LinkedList<string>(); Rules[13].AddLast("boolop"); Rules[13].AddLast(">");
@@ -40,6 +53,127 @@ namespace compiler
             Rules[25] = new LinkedList<string>(); Rules[25].AddLast("simpleexpr"); Rules[25].AddLast("identifier");
             Rules[26] = new LinkedList<string>(); Rules[26].AddLast("simpleexpr"); Rules[26].AddLast("number");
             Rules[27] = new LinkedList<string>(); Rules[27].AddLast("simpleexpr"); Rules[27].AddLast("("); Rules[27].AddLast("arithexpr"); Rules[27].AddLast(")");
-        }*/
+        }
+
+        static private bool isTerminator(string type)
+        {
+            for(int i=0;i<28;i++){
+                if (type == Rules[i].First.Value)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static public void createTable(){
+            for (int i = 0; i < 28; i++)
+            {
+                string terminator = Rules[i].First.Value;
+                if (!table.ContainsKey(terminator))
+                {
+                    table.Add(terminator,new Dictionary<string,int>());
+                }
+                HashSet<string> firstSymbols = first(Rules[i].First.Next.Value);
+                foreach(string symbol in firstSymbols){
+                    if (symbol != "")
+                    {
+                        if(!table[terminator].ContainsKey(symbol))
+                        { 
+                            table[terminator].Add(symbol, i);
+                        }
+                    }
+                    else
+                    {
+                        HashSet<string> followSymbols = follow(terminator);
+                        foreach(string followSymbol in followSymbols)
+                        {
+                            if (!table[terminator].ContainsKey(followSymbol))
+                            {
+                                table[terminator].Add(followSymbol, i);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        static private HashSet<string> first(string symbol)
+        {
+            HashSet<string> firstSymbols = new HashSet<string>();
+            if (isTerminator(symbol))
+            {
+                firstSymbols.Add(symbol);
+                return firstSymbols;
+            }
+            else
+            {
+                for(int i = 0; i<28; i++)
+                {
+                    string terminator = Rules[i].First.Value;
+                    if (terminator == symbol)
+                    {
+                        LinkedListNode<string> node = Rules[i].First;
+                        HashSet<string> nodeFirstSymbols = null;
+                        while (node.Next != null && (nodeFirstSymbols == null || nodeFirstSymbols.Contains("") ))
+                        {
+                            node = node.Next;
+                            nodeFirstSymbols = first(node.Value);
+                            firstSymbols.UnionWith(nodeFirstSymbols);
+                        }
+                    }
+                }
+            }
+            return firstSymbols;
+        }
+
+        static private HashSet<string> follow(string symbol)
+        {
+            HashSet<string> followSymbols = new HashSet<string>();
+            if (symbol == "program")
+            {
+                followSymbols.Add("$");
+            }
+            for (int i = 0; i < 28; i++)
+            {
+                LinkedListNode<string> node = Rules[i].First.Next;
+                if (node.Value == symbol)
+                {
+                    while (true)
+                    {
+                        if (node.Next != null)
+                        {
+                            LinkedListNode<string> tempNode = node;
+                            HashSet<string> nextFirst = null;
+                            do{
+                                if (tempNode.Next == null)
+                                {
+                                    if (nextFirst.Contains(""))
+                                    {
+                                        followSymbols.UnionWith(follow(Rules[i].First.Value));
+                                    }
+                                    break;
+                                }
+                                tempNode = tempNode.Next;
+                                nextFirst = first(tempNode.Value);
+                                followSymbols.UnionWith(nextFirst);
+                                if (followSymbols.Contains(""))
+                                {
+                                    followSymbols.Remove("");
+                                }
+                            }
+                            while (nextFirst.Contains(""));
+                            node = node.Next;
+                        }
+                        else
+                        {
+                            followSymbols.UnionWith(follow(Rules[i].First.Value));
+                            break;
+                        }
+                    }                   
+                }
+            }
+            return followSymbols;            
+        }        
     }
 }

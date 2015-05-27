@@ -15,6 +15,8 @@ namespace compiler
         [STAThread]
         static void Main()
         {
+            LLparser.make();
+            Dictionary<string, Dictionary<string, int>> table = LLparser.Table;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
