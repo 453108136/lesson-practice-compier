@@ -24,6 +24,19 @@ namespace compiler
         static public string[,] erList = new string [10000,4];
         public static int countColumError = 0;
 
+        public static void tokenListClear()
+        {
+            tokenList.Initialize();
+            countColum = 0;
+        }
+
+        public static void tokenClear()
+        {
+            position = 0;
+            line = 1;
+            col = 0;
+            code = 0;
+        }
 
         public static void tokenListReset()
         {

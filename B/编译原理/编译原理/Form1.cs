@@ -162,6 +162,21 @@ namespace compiler
             }
         }
 
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            LexicalAnalyzer.tokenListClear();
+            LexicalAnalyzer.tokenClear();
+            this.listView1.Clear();
+            listView1.Columns.Add("tokenType", 70);
+            listView1.Columns.Add("attributeValue", 70);
+            listView1.Columns.Add("lineNumber", 70);
+            listView1.Columns.Add("linePosition", 70);
+            listView1.GridLines = true;
+            listView1.View = View.Details;
+            listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
+            listView1.FullRowSelect = true;
+        }
+
         /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int c =  listView1.SelectedItems[0].Index;
