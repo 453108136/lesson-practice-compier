@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace compiler
 {
@@ -93,7 +94,7 @@ namespace compiler
             {
                 MessageBox.Show("There are no more Tokens!");
             }
-            if(LexicalAnalyzer.errorList.Count == 0)
+            if (LexicalAnalyzer.errorList.Count == 0)
             {
                 //StreamReader fil = new StreamReader(fileOut);
                 //richTextBox2.Text = fil.ReadToEnd();
@@ -101,10 +102,10 @@ namespace compiler
                 for (int a = 0; a < LexicalAnalyzer.countColum; a++)
                 {
                     ListViewItem li = new ListViewItem();
-                    li.Text = LexicalAnalyzer.tokenList[a,0];
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a,1]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a,2]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a,3]);
+                    li.Text = LexicalAnalyzer.tokenList[a, 0];
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 1]);
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 2]);
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 3]);
                     this.lexicalView.Items.Add(li);
                 }
             }
@@ -133,9 +134,27 @@ namespace compiler
                 }
             }
 
-            if(token != null && token.Tokentype!="error")
+            if (token != null && token.Tokentype != "error")
             {
+
                 string symbol = LLparser.Stack.Peek();
+                while (symbol == "///")
+                {
+                    LLparser.Stack.Pop();
+                    treeStack.Pop();
+                    symbol = LLparser.Stack.Peek();
+                }
+                if (symbol == "$")
+                {
+                    if (token.Tokentype == "$")
+                    {
+                        MessageBox.Show("Complete!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong token type!");
+                    }
+                }
                 if (LLparser.isTerminator(symbol))
                 {
                     TreeNode newNode = new TreeNode(symbol);
@@ -165,6 +184,7 @@ namespace compiler
                                 treeStack.Push(newNode);
                             }
                             LLparser.Stack.Pop();
+                            LLparser.Stack.Push("///");
                             LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
                             symbol = LLparser.Stack.Peek();
                             if (symbol == "")
@@ -172,6 +192,22 @@ namespace compiler
                                 newNode = new TreeNode(symbol);
                                 treeStack.Peek().Nodes.Add(newNode);
                                 LLparser.Stack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                                while (symbol == "///")
+                                {
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
+                                }
+                            }
+                            else
+                            {
+                                while (symbol == "///")
+                                {
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
+                                }
                             }
                         }
                         else
@@ -180,6 +216,12 @@ namespace compiler
                             break;
                         }
                     }
+                    //while (symbol == "")
+                    //{
+                    // TreeNode newNode = new TreeNode(symbol);
+                    //treeStack.Pop().Nodes.Add(newNode);
+                    //symbol = LLparser.Stack.Pop();
+                    // }
                     TreeNode lastNode = new TreeNode(symbol);
                     treeStack.Peek().Nodes.Add(lastNode);
                     treeStack.Push(lastNode);
@@ -188,6 +230,13 @@ namespace compiler
                 }
                 syntaxTreeView.Nodes.Clear();
                 syntaxTreeView.Nodes.Add(root);
+                syntaxTreeView.ExpandAll();
+            }
+            if (token!=null &&  token.Tokentype != "$")
+            {
+                //Thread.Sleep(100);
+                button4_Click(sender, e);
+
             }
         }
 

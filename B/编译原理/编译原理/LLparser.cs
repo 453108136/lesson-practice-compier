@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace compiler
 {
-    static class LLparser
+    class LLparser
     {
         static private LinkedList<string>[] Rules = new LinkedList<string>[28];
         static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
@@ -24,7 +24,8 @@ namespace compiler
             get { return LLparser.table; }
         }
 
-        static LLparser()
+        //static LLparser()
+        public void make()
         {
             init();
             createTable();
@@ -40,7 +41,7 @@ namespace compiler
             Rules[5] = new LinkedList<string>(); Rules[5].AddLast("compoundstmt"); Rules[5].AddLast("{"); Rules[5].AddLast("stmts"); Rules[5].AddLast("}");
             Rules[6] = new LinkedList<string>(); Rules[6].AddLast("stmts"); Rules[6].AddLast("stmt"); Rules[6].AddLast("stmts");
             Rules[7] = new LinkedList<string>(); Rules[7].AddLast("stmts"); Rules[7].AddLast("");
-            Rules[8] = new LinkedList<string>(); Rules[8].AddLast("ifstmt"); Rules[8].AddLast("if"); Rules[8].AddLast("("); Rules[8].AddLast("boolexpt"); Rules[8].AddLast(")"); Rules[8].AddLast("then"); Rules[8].AddLast("stmt"); Rules[8].AddLast("else"); Rules[8].AddLast("stmt");
+            Rules[8] = new LinkedList<string>(); Rules[8].AddLast("ifstmt"); Rules[8].AddLast("if"); Rules[8].AddLast("("); Rules[8].AddLast("boolexpr"); Rules[8].AddLast(")"); Rules[8].AddLast("then"); Rules[8].AddLast("stmt"); Rules[8].AddLast("else"); Rules[8].AddLast("stmt");
             Rules[9] = new LinkedList<string>(); Rules[9].AddLast("whilestmt"); Rules[9].AddLast("while"); Rules[9].AddLast("("); Rules[9].AddLast("boolexpr"); Rules[9].AddLast(")"); Rules[9].AddLast("stmt");
             Rules[10] = new LinkedList<string>(); Rules[10].AddLast("assgstmt"); Rules[10].AddLast("identifier"); Rules[10].AddLast("="); Rules[10].AddLast("arithexpr"); Rules[10].AddLast(";");
             Rules[11] = new LinkedList<string>(); Rules[11].AddLast("boolexpr"); Rules[11].AddLast("arithexpr"); Rules[11].AddLast("boolop"); Rules[11].AddLast("arithexpr");
@@ -161,18 +162,19 @@ namespace compiler
             for (int i = 0; i < 28; i++)
             {
                 LinkedListNode<string> node = Rules[i].First.Next;
-                if (node.Value == symbol)
-                {
+               // if (node.Value == symbol)
+                //{
                     while (true)
                     {
-                        if (node.Next != null)
+                        if (node.Value == symbol)
                         {
                             LinkedListNode<string> tempNode = node;
                             HashSet<string> nextFirst = null;
-                            do{
+                            do
+                            {
                                 if (tempNode.Next == null)
                                 {
-                                    if (nextFirst.Contains(""))
+                                    if (symbol != Rules[i].First.Value)
                                     {
                                         followSymbols.UnionWith(follow(Rules[i].First.Value));
                                     }
@@ -187,15 +189,18 @@ namespace compiler
                                 }
                             }
                             while (nextFirst.Contains(""));
+                        }
+                        if (node.Next != null)
+                        {
                             node = node.Next;
                         }
                         else
                         {
-                            followSymbols.UnionWith(follow(Rules[i].First.Value));
+                            //followSymbols.UnionWith(follow(Rules[i].First.Value));
                             break;
                         }
                     }                   
-                }
+               // }
             }
             return followSymbols;            
         }        

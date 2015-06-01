@@ -15,6 +15,9 @@ namespace compiler
         [STAThread]
         static void Main()
         {
+            LLparser l = new LLparser();
+            l.make();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

@@ -100,6 +100,7 @@ namespace compiler
             {
                 str += input.ReadLine() + '\n';
             }
+            str = str + "$";
 
             string attrva = "";
             int coun = 0;
