@@ -61,6 +61,12 @@ namespace compiler
             Rules[25] = new LinkedList<string>(); Rules[25].AddLast("simpleexpr"); Rules[25].AddLast("identifier");
             Rules[26] = new LinkedList<string>(); Rules[26].AddLast("simpleexpr"); Rules[26].AddLast("number");
             Rules[27] = new LinkedList<string>(); Rules[27].AddLast("simpleexpr"); Rules[27].AddLast("("); Rules[27].AddLast("arithexpr"); Rules[27].AddLast(")");
+            stackReset();
+
+        }
+
+        static public void stackReset()
+        {
             Stack.Push("$");
             Stack.Push("program");
 

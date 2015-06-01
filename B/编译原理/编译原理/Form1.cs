@@ -70,6 +70,10 @@ namespace compiler
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if(!lexical.Checked || !syntax.Checked || !radioButton3.Checked )
+            {
+                lexicalView.Visible = true;
+            }
             button3_Click(sender, e);
             LexicalAnalyzer.errorList.Clear();
             string file = textBox1.Text;
@@ -93,21 +97,19 @@ namespace compiler
             if (LexicalAnalyzer.code == -1)
             {
                 MessageBox.Show("There are no more Tokens!");
+                return ;
             }
             if (LexicalAnalyzer.errorList.Count == 0)
             {
                 //StreamReader fil = new StreamReader(fileOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                for (int a = 0; a < LexicalAnalyzer.countColum; a++)
-                {
                     ListViewItem li = new ListViewItem();
-                    li.Text = LexicalAnalyzer.tokenList[a, 0];
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 1]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 2]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[a, 3]);
+                    li.Text = LexicalAnalyzer.tokenList[0, 0];
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 1]);
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 2]);
+                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 3]);
                     this.lexicalView.Items.Add(li);
-                }
             }
             else
             {
@@ -149,6 +151,7 @@ namespace compiler
                     if (token.Tokentype == "$")
                     {
                         MessageBox.Show("Complete!");
+                        return ;
                     }
                     else
                     {
@@ -234,7 +237,7 @@ namespace compiler
             }
             if (token!=null &&  token.Tokentype != "$")
             {
-                //Thread.Sleep(100);
+                //Thread.Sleep(1000);
                 button4_Click(sender, e);
 
             }
@@ -275,6 +278,8 @@ namespace compiler
             LexicalAnalyzer.tokenListClear();
             LexicalAnalyzer.tokenClear();
             this.lexicalView.Clear();
+            treeStack.Clear();
+            LLparser.stackReset();
             lexicalView.Columns.Add("tokenType", 70);
             lexicalView.Columns.Add("attributeValue", 70);
             lexicalView.Columns.Add("lineNumber", 70);
