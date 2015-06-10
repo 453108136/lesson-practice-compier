@@ -70,7 +70,7 @@ namespace compiler
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if(!lexical.Checked || !syntax.Checked || !radioButton3.Checked )
+            if(!lexical.Checked || !syntax.Checked || !threeAddr.Checked )
             {
                 lexicalView.Visible = true;
             }
@@ -228,7 +228,18 @@ namespace compiler
                     //symbol = LLparser.Stack.Pop();
                     // }
                     SytaxNode lastNode = new SytaxNode(symbol);
-                    lastNode.Value = token.Attributevalue;
+                    if (token.Tokentype == "number")
+                    {
+                        lastNode.Value = token.Attributevalue;
+                    }else
+                    {
+                        if(token.Tokentype == "identifier")
+                        {
+                            lastNode.Id = token.Attributevalue;
+                        }
+                    }
+                    lastNode.Line = token.Linenumber;
+                    lastNode.Position = token.Lineposition;
                     treeStack.Peek().Nodes.Add(lastNode);
                     treeStack.Push(lastNode);
                     LLparser.Stack.Pop();
@@ -266,16 +277,6 @@ namespace compiler
             }
         }
 
-        private void radioButton3_Click(object sender, EventArgs e)
-        {
-            if (radioButton3.Checked)
-            {
-                lexicalView.Visible = false;
-                syntaxTreeView.Visible = true;
-                richTextBox3.Visible = false;
-            }
-        }
-
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
             LexicalAnalyzer.tokenListClear();
@@ -301,12 +302,18 @@ namespace compiler
         private void output()
         {
             ergodic(root);
+            richTextBox3.Text = root.Code;
         }
 
         private void ergodic(SytaxNode node)
         {
+            if(node.NextNode != null)
+            {
+                ((SytaxNode)node.NextNode).Before = node;
+            }
             if (node.FirstNode != null)
             {
+                node.NodeList = new List<SytaxNode>();
                 SytaxNode childNode = (SytaxNode)node.FirstNode;
                 while (childNode.NextNode != null)
                 {
@@ -321,7 +328,23 @@ namespace compiler
                 }
                 LLparser.synthetical(node, node.State);
             }
+            //else
+            //{
+            //    if(node.Text == "identifier" && ((SytaxNode)node.Parent).State == 25)
+            //    {
+            //        node.Place = SymbolTable.addSymbol(node.Id, "double", node.Line, node.Position);
+            //    }
+            //}
             return;
+        }
+
+
+        private void threeAddr_Click(object sender, EventArgs e)
+        {
+
+            lexicalView.Visible = false;
+            syntaxTreeView.Visible = false;
+            richTextBox3.Visible = true;
         }
 
         /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)

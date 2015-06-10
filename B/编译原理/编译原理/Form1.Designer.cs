@@ -37,7 +37,7 @@
             this.lexicalView = new System.Windows.Forms.ListView();
             this.lexical = new System.Windows.Forms.RadioButton();
             this.syntax = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.threeAddr = new System.Windows.Forms.RadioButton();
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.syntaxTreeView = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
@@ -131,17 +131,17 @@
             this.syntax.UseVisualStyleBackColor = true;
             this.syntax.Click += new System.EventHandler(this.syntax_Click);
             // 
-            // radioButton3
+            // threeAddr
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(708, 41);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(47, 16);
-            this.radioButton3.TabIndex = 10;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "语义";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            this.radioButton3.Click += new System.EventHandler(this.radioButton3_Click);
+            this.threeAddr.AutoSize = true;
+            this.threeAddr.Location = new System.Drawing.Point(708, 41);
+            this.threeAddr.Name = "threeAddr";
+            this.threeAddr.Size = new System.Drawing.Size(59, 16);
+            this.threeAddr.TabIndex = 10;
+            this.threeAddr.TabStop = true;
+            this.threeAddr.Text = "三地址";
+            this.threeAddr.UseVisualStyleBackColor = true;
+            this.threeAddr.Click += new System.EventHandler(this.threeAddr_Click);
             // 
             // richTextBox3
             // 
@@ -167,7 +167,7 @@
             this.ClientSize = new System.Drawing.Size(802, 562);
             this.Controls.Add(this.syntaxTreeView);
             this.Controls.Add(this.richTextBox3);
-            this.Controls.Add(this.radioButton3);
+            this.Controls.Add(this.threeAddr);
             this.Controls.Add(this.syntax);
             this.Controls.Add(this.lexical);
             this.Controls.Add(this.lexicalView);
@@ -196,7 +196,7 @@
         private System.Windows.Forms.ListView lexicalView;
         private System.Windows.Forms.RadioButton lexical;
         private System.Windows.Forms.RadioButton syntax;
-        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton threeAddr;
         private System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.TreeView syntaxTreeView;
     }

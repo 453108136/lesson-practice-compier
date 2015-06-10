@@ -90,12 +90,12 @@ namespace compiler
 
         private static string gen(string op, string result, string para1, string para2)
         {
-            return "    " + op + "," + result + "," + para1 + "," + para2 + "/n/r";
+            return "    " + op + "," + result + "," + para1 + "," + para2 + "\r";
         }
 
         private static string gen(string lable)
         {
-            return lable + ":/n/r";
+            return lable + ":\r";
         }
 
         static public void inherit(SytaxNode node, int state)
@@ -190,26 +190,26 @@ namespace compiler
                     node.Code = "";
                     break;
                 case 8:
-                    ((ifNode)node).ElseAddr = newLabel();
-                    ((ifNode)node).AfterAddr = newLabel();
-                    node.Code = node.NodeList[1].Code + gen("jmpf", node.NodeList[1].Place.Key, "", ((ifNode)node).ElseAddr);
-                    node.Code += node.NodeList[3].Code + gen("jmp", "", "", ((ifNode)node).AfterAddr);
-                    node.Code += gen(((ifNode)node).ElseAddr) + node.NodeList[5].Code + gen(((ifNode)node).AfterAddr);
+                    node.ElseAddr = newLabel();
+                    node.AfterAddr = newLabel();
+                    node.Code = node.NodeList[2].Code + gen("jmpf", node.NodeList[2].Place.Key, "", node.ElseAddr);
+                    node.Code += node.NodeList[5].Code + gen("jmp", "", "", node.AfterAddr);
+                    node.Code += gen(node.ElseAddr) + node.NodeList[7].Code + gen(node.AfterAddr);
                     break;
                 case 9:
-                    ((whileNode)node).BeginAddr = newLabel();
-                    ((whileNode)node).AfterAddr = newLabel();
-                    node.Code = gen(((whileNode)node).BeginAddr) + node.NodeList[1].Code;
-                    node.Code += gen("jmpf", node.NodeList[1].Place.Key, "", ((whileNode)node).AfterAddr) + node.NodeList[3].Code;
-                    node.Code += gen("jmp", "", "", ((whileNode)node).BeginAddr) + gen(((whileNode)node).AfterAddr);
+                    node.BeginAddr = newLabel();
+                    node.AfterAddr = newLabel();
+                    node.Code = gen(node.BeginAddr) + node.NodeList[2].Code;
+                    node.Code += gen("jmpf", node.NodeList[2].Place.Key, "", node.AfterAddr) + node.NodeList[4].Code;
+                    node.Code += gen("jmp", "", "", node.BeginAddr) + gen(node.AfterAddr);
                     break;
                 case 10:
-                    node.NodeList[0].Place = SymbolTable.addSymbol(node.NodeList[0].Value, "double", node.NodeList[0].Line, node.NodeList[0].Position);
+                    node.NodeList[0].Place = SymbolTable.addSymbol(node.NodeList[0].Id, "double", node.NodeList[0].Line, node.NodeList[0].Position);
                     node.Code = node.NodeList[2].Code + gen("mov", node.NodeList[0].Place.Key, "", node.NodeList[2].Place.Key);
                     break;
                 case 11:
                     node.Place = SymbolTable.newtemp(node.Type);
-                    node.Code = node.NodeList[0].Code + node.NodeList[2];
+                    node.Code = node.NodeList[0].Code + node.NodeList[2].Code;
                     switch (node.NodeList[1].Value)
                     {
                         case "<": 
@@ -339,6 +339,7 @@ namespace compiler
                 case 25:
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Value = node.NodeList[0].Value;
+                    node.NodeList[0].Place = SymbolTable.getSymbol(node.NodeList[0].Id);
                     node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                     break;
                 case 26:

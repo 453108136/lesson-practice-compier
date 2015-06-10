@@ -51,6 +51,7 @@ namespace compiler
             table[tempname] = new LinkedList<Symbol>();
             Symbol tempSym = new Symbol(tempname, type);
             table[tempname].AddFirst(tempSym);
+            tempNum++;
             return tempSym;
         }
     }
