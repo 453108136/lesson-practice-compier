@@ -38,7 +38,6 @@
             this.lexical = new System.Windows.Forms.RadioButton();
             this.syntax = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.syntaxTreeView = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
@@ -123,7 +122,7 @@
             // syntax
             // 
             this.syntax.AutoSize = true;
-            this.syntax.Location = new System.Drawing.Point(534, 41);
+            this.syntax.Location = new System.Drawing.Point(581, 41);
             this.syntax.Name = "syntax";
             this.syntax.Size = new System.Drawing.Size(47, 16);
             this.syntax.TabIndex = 9;
@@ -135,7 +134,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(622, 41);
+            this.radioButton3.Location = new System.Drawing.Point(708, 41);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(47, 16);
             this.radioButton3.TabIndex = 10;
@@ -143,17 +142,6 @@
             this.radioButton3.Text = "语义";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.Click += new System.EventHandler(this.radioButton3_Click);
-            // 
-            // radioButton4
-            // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(708, 41);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(47, 16);
-            this.radioButton4.TabIndex = 11;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "错误";
-            this.radioButton4.UseVisualStyleBackColor = true;
             // 
             // richTextBox3
             // 
@@ -170,6 +158,7 @@
             this.syntaxTreeView.Name = "syntaxTreeView";
             this.syntaxTreeView.Size = new System.Drawing.Size(309, 399);
             this.syntaxTreeView.TabIndex = 14;
+            this.syntaxTreeView.Visible = false;
             // 
             // Form1
             // 
@@ -178,7 +167,6 @@
             this.ClientSize = new System.Drawing.Size(802, 562);
             this.Controls.Add(this.syntaxTreeView);
             this.Controls.Add(this.richTextBox3);
-            this.Controls.Add(this.radioButton4);
             this.Controls.Add(this.radioButton3);
             this.Controls.Add(this.syntax);
             this.Controls.Add(this.lexical);
@@ -209,7 +197,6 @@
         private System.Windows.Forms.RadioButton lexical;
         private System.Windows.Forms.RadioButton syntax;
         private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.TreeView syntaxTreeView;
     }

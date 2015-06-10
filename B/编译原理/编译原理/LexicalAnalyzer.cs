@@ -177,6 +177,17 @@ namespace compiler
                                 state = 0;
                                 coun = 0;
                             }
+                            else if (ch == '$')
+                            {
+                                Token a = new Token('$'.ToString(),'$'.ToString(),line,col);
+                                output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\n');
+                                tokenList[countColum, 0] = ch.ToString();
+                                tokenList[countColum, 1] = attrva;
+                                tokenList[countColum, 2] = "";
+                                tokenList[countColum, 3] = "";
+                                countColum++;
+                                return a;
+                            }
                             else
                             {
                                 Error a = new Error(line, col - coun, "illegal char input");
@@ -192,7 +203,7 @@ namespace compiler
                                 position += 1;
                                 col += 1;
                                 Token b = new Token("error", a.Message, line, col - coun);
-                                return b ;
+                                return b;
                             }
                             break;
 
