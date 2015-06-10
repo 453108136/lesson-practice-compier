@@ -10,6 +10,7 @@ namespace compiler
     class LLparser
     {
         static private LinkedList<string>[] Rules = new LinkedList<string>[28];
+        static private int loopNum = 1;
         static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
         static private Stack<string> stack = new Stack<string>();
 
@@ -69,6 +70,283 @@ namespace compiler
         static public void pushStack (int rulesNo)
         {
             pushNode(Rules[rulesNo].First.Next);
+        }
+
+        static private double stringValue(string str)
+        {
+            return Convert.ToDouble(str);
+        }
+
+        static private string newLabel()
+        {
+            return "L" + loopNum++;
+        }
+
+        private static string gen(string op, string result, string para1, string para2)
+        {
+            return "    " + op + "," + result + "," + para1 + "," + para2 + "/n/r";
+        }
+
+        private static string gen(string lable)
+        {
+            return lable + ":/n/r";
+        }
+
+        static public void inherit(SytaxNode node, int state)
+        {
+            switch(state)
+            {
+                case 0 :
+                    break;
+                case 1 :
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break;
+                case 13:
+                    break;
+                case 14:
+                    break;
+                case 15:
+                    break;
+                case 16:
+                    break;
+                case 17:
+                    break;
+                case 18:
+                    break;
+                case 19:
+                    break;
+                case 20:
+                    break;
+                case 21:
+                    break;
+                case 22:
+                    break;
+                case 23:
+                    break;
+                case 24:
+                    break;
+                case 25:
+                    break;
+                case 26:
+                    break;
+                case 27:
+                    break;
+            }
+        }
+
+        static public void synthetical(SytaxNode node, int state)
+        {
+            switch (state)
+            {
+                case 0:
+                    node.Code = node.NodeList[0].Code;
+                    break;
+                case 1:
+                    node.Code = node.NodeList[0].Code;
+                    break;
+                case 2:
+                    node.Code = node.NodeList[0].Code;
+                    break;
+                case 3:
+                    node.Code = node.NodeList[0].Code;
+                    break;
+                case 4:
+                    node.Code = node.NodeList[0].Code;
+                    break;
+                case 5:
+                    node.Code = node.NodeList[1].Code;
+                    break;
+                case 6:
+                    node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
+                    break;
+                case 7:
+                    node.Code = "";
+                    break;
+                case 8:
+                    ((ifNode)node).ElseAddr = newLabel();
+                    ((ifNode)node).AfterAddr = newLabel();
+                    node.Code = node.NodeList[1].Code + gen("jmpf", node.NodeList[1].Place.Key, "", ((ifNode)node).ElseAddr);
+                    node.Code += node.NodeList[3].Code + gen("jmp", "", "", ((ifNode)node).AfterAddr);
+                    node.Code += gen(((ifNode)node).ElseAddr) + node.NodeList[5].Code + gen(((ifNode)node).AfterAddr);
+                    break;
+                case 9:
+                    ((whileNode)node).BeginAddr = newLabel();
+                    ((whileNode)node).AfterAddr = newLabel();
+                    node.Code = gen(((whileNode)node).BeginAddr) + node.NodeList[1].Code;
+                    node.Code += gen("jmpf", node.NodeList[1].Place.Key, "", ((whileNode)node).AfterAddr) + node.NodeList[3].Code;
+                    node.Code += gen("jmp", "", "", ((whileNode)node).BeginAddr) + gen(((whileNode)node).AfterAddr);
+                    break;
+                case 10:
+                    node.NodeList[0].Place = SymbolTable.addSymbol(node.NodeList[0].Value, "double", node.NodeList[0].Line, node.NodeList[0].Position);
+                    node.Code = node.NodeList[2].Code + gen("mov", node.NodeList[0].Place.Key, "", node.NodeList[2].Place.Key);
+                    break;
+                case 11:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[0].Code + node.NodeList[2];
+                    switch (node.NodeList[1].Value)
+                    {
+                        case "<": 
+                            node.Code += gen("lt", node.Place.Key, node.NodeList[0].Place.Key, node.NodeList[2].Place.Key);
+                            break;
+                        case ">":
+                            node.Code += gen("gt", node.Place.Key, node.NodeList[0].Place.Key, node.NodeList[2].Place.Key);
+                            break;
+                        case "<=":
+                            node.Code += gen("le", node.Place.Key, node.NodeList[0].Place.Key, node.NodeList[2].Place.Key);
+                            break;
+                        case ">=":
+                            node.Code += gen("ge", node.Place.Key, node.NodeList[0].Place.Key, node.NodeList[2].Place.Key);
+                            break;
+                        case "==":
+                            node.Code += gen("eq", node.Place.Key, node.NodeList[0].Place.Key, node.NodeList[2].Place.Key);
+                            break;
+                    }
+                    break;
+                case 12:
+                    node.Value = "<";
+                    break;
+                case 13:
+                    node.Value = ">";
+                    break;
+                case 14:
+                    node.Value = "<=";
+                    break;
+                case 15:
+                    node.Value = ">=";
+                    break;
+                case 16:
+                    node.Value = "==";
+                    break;
+                case 17:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
+                    if(node.NodeList[1].Value == null)
+                    {
+                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
+                        node.Value = node.NodeList[0].Value;
+                    }
+                    else 
+                    {
+                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    break;
+                case 18:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
+                    node.Code += gen("add", node.NodeList[1].Place.Key, node.Before.Place.Key,node.NodeList[1].Place.Key);
+                    node.NodeList[1].Value = (stringValue(node.NodeList[1].Value) + stringValue(node.Before.Value)).ToString();
+                    if(node.NodeList[2].Value == null)
+                    {
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    else
+                    {
+                        node.Value = node.NodeList[2].Value;
+                    }
+                    break;
+                case 19:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
+                    node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
+                    node.NodeList[1].Value = (stringValue(node.Before.Value) - stringValue(node.NodeList[1].Value)).ToString() ;
+                    if (node.NodeList[2].Value == null)
+                    {
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    else
+                    {
+                        node.Value = node.NodeList[2].Value;
+                    }
+                    break;
+                case 20:
+                    node.Code = "";
+                    node.Value = null;
+                    break;
+                case 21:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
+                    if (node.NodeList[1].Value == null)
+                    {
+                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
+                        node.Value = node.NodeList[0].Value;
+                    }
+                    else
+                    {
+                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    break;
+                case 22:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
+                    node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
+                    node.NodeList[1].Value = (stringValue(node.Before.Value) - stringValue(node.NodeList[1].Value)).ToString();
+                    if (node.NodeList[2].Value == null)
+                    {
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    else
+                    {
+                        node.Value = node.NodeList[2].Value;
+                    }
+                    break;
+                case 23:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
+                    node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
+                    node.NodeList[1].Value = (stringValue(node.Before.Value) - stringValue(node.NodeList[1].Value)).ToString();
+                    if (node.NodeList[2].Value == null)
+                    {
+                        node.Value = node.NodeList[1].Value;
+                    }
+                    else
+                    {
+                        node.Value = node.NodeList[2].Value;
+                    }
+                    break;
+                case 24:
+                    node.Code = "";
+                    node.Value = null;
+                    break;
+                case 25:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Value = node.NodeList[0].Value;
+                    node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
+                    break;
+                case 26:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Value = node.NodeList[0].Value;
+                    node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Value);
+                    break;
+                case 27:
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Value = node.NodeList[1].Value;
+                    node.Code = gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                    break;
+            }
+
         }
 
         static private void pushNode(LinkedListNode<string> node)

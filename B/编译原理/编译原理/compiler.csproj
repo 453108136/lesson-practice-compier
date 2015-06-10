@@ -54,6 +54,7 @@
     <Compile Include="LLparser.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="SymbolTable.cs" />
+    <Compile Include="SytaxNode.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="LexicalAnalyzer.cs" />
     <Compile Include="Program.cs" />

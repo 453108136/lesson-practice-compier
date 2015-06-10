@@ -51,5 +51,13 @@ namespace compiler
             Line = line;
             Positon = positon;
         }
+
+        public Symbol(string key, string type)
+        {
+            Key = key;
+            Type = type;
+            Line = 0;
+            Positon = 0;
+        }
     }
 }

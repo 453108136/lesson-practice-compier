@@ -14,8 +14,8 @@ namespace compiler
 {
     public partial class Form1 : Form
     {
-        static private Stack<TreeNode> treeStack = new Stack<TreeNode>();
-        static private TreeNode root;
+        static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
+        static private SytaxNode root;
         public Form1()
         {
             InitializeComponent();
@@ -149,6 +149,7 @@ namespace compiler
                     if (token.Tokentype == "$")
                     {
                         MessageBox.Show("Complete!");
+                        output();
                     }
                     else
                     {
@@ -157,7 +158,7 @@ namespace compiler
                 }
                 if (LLparser.isTerminator(symbol))
                 {
-                    TreeNode newNode = new TreeNode(symbol);
+                    SytaxNode newNode = new SytaxNode(symbol);
                     treeStack.Peek().Nodes.Add(newNode);
                     if (symbol != token.Tokentype)
                     {
@@ -172,7 +173,7 @@ namespace compiler
                     {
                         if (LLparser.Table[symbol].ContainsKey(token.Tokentype))
                         {
-                            TreeNode newNode = new TreeNode(symbol);
+                            SytaxNode newNode = new SytaxNode(symbol);
                             if (treeStack.Count == 0)
                             {
                                 treeStack.Push(newNode);
@@ -185,11 +186,12 @@ namespace compiler
                             }
                             LLparser.Stack.Pop();
                             LLparser.Stack.Push("///");
+                            newNode.State = LLparser.Table[symbol][token.Tokentype];
                             LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
                             symbol = LLparser.Stack.Peek();
                             if (symbol == "")
                             {
-                                newNode = new TreeNode(symbol);
+                                newNode = new SytaxNode(symbol);
                                 treeStack.Peek().Nodes.Add(newNode);
                                 LLparser.Stack.Pop();
                                 symbol = LLparser.Stack.Peek();
@@ -218,11 +220,12 @@ namespace compiler
                     }
                     //while (symbol == "")
                     //{
-                    // TreeNode newNode = new TreeNode(symbol);
+                    // SytaxNode newNode = new SytaxNode(symbol);
                     //treeStack.Pop().Nodes.Add(newNode);
                     //symbol = LLparser.Stack.Pop();
                     // }
-                    TreeNode lastNode = new TreeNode(symbol);
+                    SytaxNode lastNode = new SytaxNode(symbol);
+                    lastNode.Value = token.Attributevalue;
                     treeStack.Peek().Nodes.Add(lastNode);
                     treeStack.Push(lastNode);
                     LLparser.Stack.Pop();
@@ -290,6 +293,31 @@ namespace compiler
 
         }
 
+        private void output()
+        {
+            ergodic(root);
+        }
+
+        private void ergodic(SytaxNode node)
+        {
+            if (node.FirstNode != null)
+            {
+                SytaxNode childNode = (SytaxNode)node.FirstNode;
+                while (childNode.NextNode != null)
+                {
+                    node.NodeList.Add(childNode);
+                    childNode = (SytaxNode)childNode.NextNode;
+                }
+                node.NodeList.Add(childNode);
+                LLparser.inherit(node, node.State);
+                foreach (SytaxNode ergodicNode in node.NodeList)
+                {
+                    ergodic(ergodicNode);
+                }
+                LLparser.synthetical(node, node.State);
+            }
+            return;
+        }
 
         /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
