@@ -245,16 +245,18 @@ namespace compiler
                     node.Value = "==";
                     break;
                 case 17:
-                    node.Place = SymbolTable.newtemp(node.Type);
+                    //node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
                     if(node.NodeList[1].Value == null)
                     {
-                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
+                        node.Place = node.NodeList[0].Place;
+                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                         node.Value = node.NodeList[0].Value;
                     }
-                    else 
+                    else
                     {
-                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                        node.Place = node.NodeList[1].Place;
+                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
                         node.Value = node.NodeList[1].Value;
                     }
                     break;
@@ -291,16 +293,18 @@ namespace compiler
                     node.Value = null;
                     break;
                 case 21:
-                    node.Place = SymbolTable.newtemp(node.Type);
+                    //node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
                     if (node.NodeList[1].Value == null)
                     {
-                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
+                        node.Place = node.NodeList[0].Place;
+                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                         node.Value = node.NodeList[0].Value;
                     }
                     else
                     {
-                        node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                        node.Place = node.NodeList[1].Place;
+                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
                         node.Value = node.NodeList[1].Value;
                     }
                     break;
@@ -348,9 +352,10 @@ namespace compiler
                     node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Value);
                     break;
                 case 27:
-                    node.Place = SymbolTable.newtemp(node.Type);
+                    //node.Place = SymbolTable.newtemp(node.Type);
                     node.Value = node.NodeList[1].Value;
-                    node.Code = gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                    node.Place = node.NodeList[1].Place;
+                    //node.Code = gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
                     break;
             }
 
