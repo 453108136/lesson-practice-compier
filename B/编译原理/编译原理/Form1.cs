@@ -17,12 +17,14 @@ namespace compiler
         static private SytaxNode root;
         private Timer timer = new Timer();
         private bool fileBool = true;
+        private int delay = 1000;
         public Form1()
         {
             InitializeComponent();
             timer.Tick += new EventHandler(sytaxAnalyse);
+            timer.Interval = delay;
             timer.Enabled = false;
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(delay);
         }
         public int size;
 
@@ -415,6 +417,8 @@ namespace compiler
         private void autoButton_Click(object sender, EventArgs e)
         {
             timer.Enabled = true;
+            delay = Convert.ToInt32(delayBox.Text);
+            timer.Interval = delay;
         }
 
         private void pauseButton_Click(object sender, EventArgs e)

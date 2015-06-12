@@ -1,8 +1,0 @@
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\bin\Debug\compiler.exe.config
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\obj\Debug\compiler.exe
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\obj\Debug\compiler.pdb
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\obj\Debug\compiler.Form1.resources
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\obj\Debug\compiler.Properties.Resources.resources
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\obj\Debug\compiler.csproj.GenerateResource.Cache
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\bin\Debug\compiler.exe
-C:\Users\Administrator.WIN-I4CR061GMDC\Documents\GitHub\Project\lesson-practice-compier\B\编译原理\编译原理\bin\Debug\compiler.pdb
