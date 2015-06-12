@@ -166,11 +166,32 @@ namespace compiler
                 {
                     SytaxNode newNode = new SytaxNode(symbol);
                     treeStack.Peek().Nodes.Add(newNode);
+                    LLparser.Stack.Pop();
                     if (symbol != token.Tokentype)
                     {
-                        MessageBox.Show("Wrong token type!");
+                        //MessageBox.Show("Wrong token type!");
+                        symbol = LLparser.Stack.Peek();
+                        while (symbol != "stmts" && token.Tokentype != "$")
+                        {
+                            newNode = new SytaxNode(symbol);
+                            treeStack.Peek().Nodes.Add(newNode);
+                            LLparser.Stack.Pop();
+                            symbol = LLparser.Stack.Peek();
+                            while (symbol == "///")
+                            {
+                                LLparser.Stack.Pop();
+                                treeStack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                            }
+                        }
+                        if (token.Tokentype == "$")
+                        {
+                            fileBool = false;
+                            timer.Enabled = false;
+                            return;
+                        }
+                        return;
                     }
-                    LLparser.Stack.Pop();
                 }
                 else
                 {
@@ -220,8 +241,34 @@ namespace compiler
                         }
                         else
                         {
-                            MessageBox.Show("Wrong token type!");
-                            break;
+                            //MessageBox.Show("Wrong token type!");
+                            symbol = LLparser.Stack.Peek();
+                            while (symbol != "stmts" && token.Tokentype != "$")
+                            {
+                                SytaxNode newNode = new SytaxNode(symbol);
+                                treeStack.Peek().Nodes.Add(newNode);
+                                LLparser.Stack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                                while (symbol == "///")
+                                {
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
+                                }
+                                if(symbol == "$")
+                                {
+                                    fileBool = false;
+                                    timer.Enabled = false;
+                                    return;
+                                }
+                            }
+                            if (token.Tokentype == "$")
+                            {
+                                fileBool = false;
+                                timer.Enabled = false;
+                                return;
+                            }
+                            return;
                         }
                     }
                     //while (symbol == "")
@@ -252,12 +299,6 @@ namespace compiler
                 syntaxTreeView.Nodes.Clear();
                 syntaxTreeView.Nodes.Add(root);
                 syntaxTreeView.ExpandAll();
-            }
-            if (token != null && token.Tokentype != "$")
-            {
-                //Thread.Sleep(1000);
-                //button4_Click(sender, e);
-
             }
         }
 
