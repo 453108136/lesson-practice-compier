@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using System.Threading;
 
 namespace compiler
 {
@@ -16,9 +15,14 @@ namespace compiler
     {
         static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
         static private SytaxNode root;
+        private Timer timer = new Timer();
+        private bool fileBool = true;
         public Form1()
         {
             InitializeComponent();
+            timer.Tick += new EventHandler(sytaxAnalyse);
+            timer.Enabled = false;
+            System.Threading.Thread.Sleep(1000);
         }
         public int size;
 
@@ -32,8 +36,16 @@ namespace compiler
             {  
                 string file = fileDialog.FileName;
                 textBox1.Text = file;
-                richTextBox1.Text = "";
+                fileBox.Text = "";
             }
+            string fileOut = @"C:\text.txt";
+            LexicalAnalyzer.output = new StreamWriter(fileOut);
+            string errorOut = @"C:\error.txt";
+            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
+            LexicalAnalyzer.output.Write("");
+            LexicalAnalyzer.errorOutput.Write("");
+            LexicalAnalyzer.output.Close();
+            LexicalAnalyzer.errorOutput.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -43,53 +55,54 @@ namespace compiler
             if (file != "")
             {
                 StreamReader fileOpen = new StreamReader(file);
-                richTextBox1.Text = fileOpen.ReadToEnd();
+                fileBox.Text = fileOpen.ReadToEnd();
                 fileOpen.Close();
             }
             else
             {
                 MessageBox.Show("NO FILES SELECTED！");
             }
-            lexicalView.Columns.Add("tokenType", 70);
-            lexicalView.Columns.Add("attributeValue", 70);
-            lexicalView.Columns.Add("lineNumber", 70);
-            lexicalView.Columns.Add("linePosition", 70);
-            lexicalView.GridLines = true;
-            lexicalView.View = View.Details;
-            lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
-            lexicalView.FullRowSelect = true;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             string file = textBox1.Text;
             StreamWriter fileSave = new StreamWriter(file);
-            fileSave.Write(richTextBox1.Text);
+            fileSave.Write(fileBox.Text);
             fileSave.Close();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if(!lexical.Checked || !syntax.Checked || !threeAddr.Checked )
+            timer.Enabled = false;
+            sytaxAnalyse(sender, e);
+        }
+
+        private void sytaxAnalyse(object sender, EventArgs e)
+        {
+            if (!lexical.Checked && !syntax.Checked && !threeAddr.Checked)
             {
                 lexicalView.Visible = true;
+                errorView.Visible = true;
             }
-            button3_Click(sender, e);
+            //button3_Click(sender, e);
+            string file1 = textBox1.Text;
+            StreamWriter fileSave = new StreamWriter(file1);
+            fileSave.Write(fileBox.Text);
+            fileSave.Close();
             LexicalAnalyzer.errorList.Clear();
             string file = textBox1.Text;
-            LexicalAnalyzer.input = new StreamReader(file);
+            LexicalAnalyzer.input = new StreamReader(file,fileBool);
             string fileOut = @"C:\text.txt";
-            LexicalAnalyzer.output = new StreamWriter(fileOut);
+            LexicalAnalyzer.output = new StreamWriter(fileOut, fileBool);
             string errorOut = @"C:\error.txt";
-            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
+            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut, fileBool);
             LexicalAnalyzer lex = new LexicalAnalyzer();
-            LexicalAnalyzer.tokenListReset();
-            LexicalAnalyzer.erListReset();
             Token token = lex.nextToken();
             string str = "";
             while (!LexicalAnalyzer.input.EndOfStream)
             {
-                str += LexicalAnalyzer.input.ReadLine() + '\n';
+                str += LexicalAnalyzer.input.ReadLine() + '\r';
             }
             LexicalAnalyzer.input.Close();
             LexicalAnalyzer.output.Close();
@@ -97,43 +110,31 @@ namespace compiler
             if (LexicalAnalyzer.code == -1)
             {
                 MessageBox.Show("There are no more Tokens!");
-                return ;
+                return;
             }
             if (LexicalAnalyzer.errorList.Count == 0)
             {
                 //StreamReader fil = new StreamReader(fileOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                    ListViewItem li = new ListViewItem();
-                    li.Text = LexicalAnalyzer.tokenList[0, 0];
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 1]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 2]);
-                    li.SubItems.Add(LexicalAnalyzer.tokenList[0, 3]);
-                    this.lexicalView.Items.Add(li);
+                ListViewItem li = new ListViewItem();
+                li.Text = token.Tokentype;
+                li.SubItems.Add(token.Attributevalue);
+                li.SubItems.Add(token.Linenumber.ToString());
+                li.SubItems.Add(token.Lineposition.ToString());
+                this.lexicalView.Items.Add(li);
             }
             else
             {
                 //StreamReader fil = new StreamReader(errorOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                this.lexicalView.Clear();
-                lexicalView.Columns.Add("errorNumber", 70);
-                lexicalView.Columns.Add("message", 70);
-                lexicalView.Columns.Add("lineNumber", 70);
-                lexicalView.Columns.Add("linePosition", 70);
-                lexicalView.GridLines = true;
-                lexicalView.View = View.Details;
-                lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
-                lexicalView.FullRowSelect = true;
-                for (int a = 0; a < LexicalAnalyzer.countColum; a++)
-                {
-                    ListViewItem li = new ListViewItem();
-                    li.Text = LexicalAnalyzer.erList[a, 0];
-                    li.SubItems.Add(LexicalAnalyzer.erList[a, 1]);
-                    li.SubItems.Add(LexicalAnalyzer.erList[a, 2]);
-                    li.SubItems.Add(LexicalAnalyzer.erList[a, 3]);
-                    this.lexicalView.Items.Add(li);
-                }
+                ListViewItem li = new ListViewItem();
+                li.Text = LexicalAnalyzer.erList[0, 0];
+                li.SubItems.Add(LexicalAnalyzer.erList[0, 1]);
+                li.SubItems.Add(LexicalAnalyzer.erList[0, 2]);
+                li.SubItems.Add(LexicalAnalyzer.erList[0, 3]);
+                this.errorView.Items.Add(li);
             }
 
             if (token != null && token.Tokentype != "error")
@@ -150,9 +151,11 @@ namespace compiler
                 {
                     if (token.Tokentype == "$")
                     {
+                        timer.Enabled = false;
                         MessageBox.Show("Complete!");
+                        fileBool = false;
                         output();
-                        return ;
+                        return;
                     }
                     else
                     {
@@ -231,9 +234,10 @@ namespace compiler
                     if (token.Tokentype == "number")
                     {
                         lastNode.Value = token.Attributevalue;
-                    }else
+                    }
+                    else
                     {
-                        if(token.Tokentype == "identifier")
+                        if (token.Tokentype == "identifier")
                         {
                             lastNode.Id = token.Attributevalue;
                         }
@@ -249,10 +253,10 @@ namespace compiler
                 syntaxTreeView.Nodes.Add(root);
                 syntaxTreeView.ExpandAll();
             }
-            if (token!=null &&  token.Tokentype != "$")
+            if (token != null && token.Tokentype != "$")
             {
                 //Thread.Sleep(1000);
-                button4_Click(sender, e);
+                //button4_Click(sender, e);
 
             }
         }
@@ -262,8 +266,9 @@ namespace compiler
             if (lexical.Checked)
             {
                 lexicalView.Visible = true;
+                errorView.Visible = true;
                 syntaxTreeView.Visible = false;
-                richTextBox3.Visible = false;
+                sytaxBox.Visible = false;
             }
         }
 
@@ -272,16 +277,18 @@ namespace compiler
             if (syntax.Checked)
             {
                 lexicalView.Visible = false;
+                errorView.Visible = false;
                 syntaxTreeView.Visible = true;
-                richTextBox3.Visible = false;
+                sytaxBox.Visible = false;
             }
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            LexicalAnalyzer.tokenListClear();
             LexicalAnalyzer.tokenClear();
+            LexicalAnalyzer.erListClear();
             this.lexicalView.Clear();
+            this.errorView.Clear();
             treeStack.Clear();
             LLparser.stackReset();
             lexicalView.Columns.Add("tokenType", 70);
@@ -292,6 +299,23 @@ namespace compiler
             lexicalView.View = View.Details;
             lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
             lexicalView.FullRowSelect = true;
+            errorView.Columns.Add("tokenType", 70);
+            errorView.Columns.Add("message", 70);
+            errorView.Columns.Add("lineNumber", 70);
+            errorView.Columns.Add("linePosition", 70);
+            errorView.GridLines = true;
+            errorView.View = View.Details;
+            errorView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            errorView.GridLines = true;
+            string fileOut = @"C:\text.txt";
+            LexicalAnalyzer.output = new StreamWriter(fileOut);
+            string errorOut = @"C:\error.txt";
+            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
+            LexicalAnalyzer.output.Write("");
+            LexicalAnalyzer.errorOutput.Write("");
+            LexicalAnalyzer.output.Close();
+            LexicalAnalyzer.errorOutput.Close();
+            fileBool = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -302,7 +326,7 @@ namespace compiler
         private void output()
         {
             ergodic(root);
-            richTextBox3.Text = root.Code;
+            sytaxBox.Text = root.Code;
         }
 
         private void ergodic(SytaxNode node)
@@ -341,10 +365,20 @@ namespace compiler
 
         private void threeAddr_Click(object sender, EventArgs e)
         {
-
+            errorView.Visible = false;
             lexicalView.Visible = false;
             syntaxTreeView.Visible = false;
-            richTextBox3.Visible = true;
+            sytaxBox.Visible = true;
+        }
+
+        private void autoButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
         }
 
         /*private void listView1_SelectedIndexChanged(object sender, EventArgs e)
