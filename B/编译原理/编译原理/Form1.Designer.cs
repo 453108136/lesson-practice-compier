@@ -43,6 +43,7 @@
             this.errorView = new System.Windows.Forms.ListView();
             this.autoButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBox1
@@ -69,7 +70,10 @@
             this.fileBox.Size = new System.Drawing.Size(366, 399);
             this.fileBox.TabIndex = 2;
             this.fileBox.Text = "";
+            this.fileBox.WordWrap = false;
+            this.fileBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.fileBox_MouseClick);
             this.fileBox.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.fileBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.fileBox_KeyUp);
             // 
             // button2
             // 
@@ -192,11 +196,21 @@
             this.pauseButton.UseVisualStyleBackColor = true;
             this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(46, 66);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(71, 12);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "第：0行 0列";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 562);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.autoButton);
             this.Controls.Add(this.errorView);
@@ -237,6 +251,7 @@
         private System.Windows.Forms.ListView errorView;
         private System.Windows.Forms.Button autoButton;
         private System.Windows.Forms.Button pauseButton;
+        private System.Windows.Forms.Label label1;
     }
 }
 

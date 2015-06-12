@@ -257,7 +257,6 @@ namespace compiler
             {
                 //Thread.Sleep(1000);
                 //button4_Click(sender, e);
-
             }
         }
 
@@ -386,5 +385,25 @@ namespace compiler
             int c =  listView1.SelectedItems[0].Index;
             c = c;
         }*/
+
+        private void Ranks()
+        {
+            int index = fileBox.GetFirstCharIndexOfCurrentLine();
+            int line = fileBox.GetLineFromCharIndex(index) + 1;
+            int column = fileBox.SelectionStart - index;
+            this.label1.Text = string.Format("第：{0}行 {1}列", line.ToString(), column.ToString());
+        }
+
+        private void fileBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            this.Ranks(); 
+        }
+
+        private void fileBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            this.Ranks(); 
+        }
+
+
     }
 }
