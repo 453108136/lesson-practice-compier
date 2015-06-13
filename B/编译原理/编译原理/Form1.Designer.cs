@@ -44,6 +44,8 @@
             this.autoButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.delayLab = new System.Windows.Forms.Label();
+            this.delayBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -87,7 +89,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(188, 512);
+            this.button3.Location = new System.Drawing.Point(181, 512);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 4;
@@ -97,7 +99,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(334, 512);
+            this.button4.Location = new System.Drawing.Point(308, 512);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 5;
@@ -179,7 +181,7 @@
             // 
             // autoButton
             // 
-            this.autoButton.Location = new System.Drawing.Point(479, 512);
+            this.autoButton.Location = new System.Drawing.Point(581, 512);
             this.autoButton.Name = "autoButton";
             this.autoButton.Size = new System.Drawing.Size(75, 23);
             this.autoButton.TabIndex = 16;
@@ -189,7 +191,7 @@
             // 
             // pauseButton
             // 
-            this.pauseButton.Location = new System.Drawing.Point(649, 512);
+            this.pauseButton.Location = new System.Drawing.Point(692, 512);
             this.pauseButton.Name = "pauseButton";
             this.pauseButton.Size = new System.Drawing.Size(75, 23);
             this.pauseButton.TabIndex = 17;
@@ -206,11 +208,30 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "第：0行 0列";
             // 
+            // delayLab
+            // 
+            this.delayLab.AutoSize = true;
+            this.delayLab.Location = new System.Drawing.Point(429, 517);
+            this.delayLab.Name = "delayLab";
+            this.delayLab.Size = new System.Drawing.Size(77, 12);
+            this.delayLab.TabIndex = 19;
+            this.delayLab.Text = "延迟（毫秒）";
+            // 
+            // delayBox
+            // 
+            this.delayBox.Location = new System.Drawing.Point(501, 514);
+            this.delayBox.Name = "delayBox";
+            this.delayBox.Size = new System.Drawing.Size(58, 21);
+            this.delayBox.TabIndex = 20;
+            this.delayBox.Text = "1000";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 562);
+            this.Controls.Add(this.delayBox);
+            this.Controls.Add(this.delayLab);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.autoButton);
@@ -253,6 +274,8 @@
         private System.Windows.Forms.Button autoButton;
         private System.Windows.Forms.Button pauseButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label delayLab;
+        private System.Windows.Forms.TextBox delayBox;
     }
 }
 
