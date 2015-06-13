@@ -113,6 +113,7 @@
             this.lexicalView.TabIndex = 7;
             this.lexicalView.UseCompatibleStateImageBehavior = false;
             this.lexicalView.Visible = false;
+            this.lexicalView.Click += new System.EventHandler(this.lexicalView_Click);
             // 
             // lexical
             // 

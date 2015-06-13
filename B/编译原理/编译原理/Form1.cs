@@ -17,6 +17,7 @@ namespace compiler
         static private SytaxNode root;
         private Timer timer = new Timer();
         private bool fileBool = true;
+        public char[,] filetxt = new char[1000, 1000];
         public Form1()
         {
             InitializeComponent();
@@ -99,10 +100,21 @@ namespace compiler
             LexicalAnalyzer.errorOutput = new StreamWriter(errorOut, fileBool);
             LexicalAnalyzer lex = new LexicalAnalyzer();
             Token token = lex.nextToken();
+            LexicalAnalyzer.input.Close();
+            LexicalAnalyzer.input = new StreamReader(file, fileBool);
             string str = "";
+            fileBox.Select(3, 10);
+            int filei=0;
             while (!LexicalAnalyzer.input.EndOfStream)
             {
-                str += LexicalAnalyzer.input.ReadLine() + '\r';
+                string strr = LexicalAnalyzer.input.ReadLine() + '\r';
+                str += strr;                
+                int i = 0;
+                for(i = 0; i<strr.ToCharArray().Length;i++)
+                {
+                    filetxt[filei,i] = strr.ToCharArray()[i];
+                }
+                filei++;
             }
             LexicalAnalyzer.input.Close();
             LexicalAnalyzer.output.Close();
@@ -438,6 +450,9 @@ namespace compiler
 
         private void fileBox_MouseClick(object sender, MouseEventArgs e)
         {
+            /*fileBox.Select(10,30);
+            fileBox.SelectionFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            fileBox.Select(0, 0);*/
             this.Ranks(); 
         }
 
@@ -446,6 +461,25 @@ namespace compiler
             this.Ranks(); 
         }
 
-
+        private void lexicalView_Click(object sender, EventArgs e)
+        {
+            int x = Convert.ToInt32(lexicalView.FocusedItem.SubItems[2].Text);
+            int j = Convert.ToInt32(lexicalView.FocusedItem.SubItems[3].Text);
+            string attrva = lexicalView.FocusedItem.SubItems[1].Text;
+            int b = 0 , count=0;
+            for (int a = 0; a < x; a++)
+            {
+                while (filetxt[a, b] != '\r')
+                {
+                    count += 1;
+                    b++;
+                }
+                count += 1;
+            }
+            count += j;
+            //fileBox.SelectionStart = 0;
+            //fileBox.Select(count , attrva.Length);
+            //fileBox.SelectionFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+        }
     }
 }
