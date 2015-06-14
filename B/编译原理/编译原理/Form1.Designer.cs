@@ -40,12 +40,12 @@
             this.threeAddr = new System.Windows.Forms.RadioButton();
             this.sytaxBox = new System.Windows.Forms.RichTextBox();
             this.syntaxTreeView = new System.Windows.Forms.TreeView();
-            this.errorView = new System.Windows.Forms.ListView();
             this.autoButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.delayLab = new System.Windows.Forms.Label();
             this.delayBox = new System.Windows.Forms.TextBox();
+            this.errorView = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // textBox1
@@ -110,12 +110,12 @@
             // lexicalView
             // 
             this.lexicalView.Location = new System.Drawing.Point(446, 81);
+            this.lexicalView.MultiSelect = false;
             this.lexicalView.Name = "lexicalView";
             this.lexicalView.Size = new System.Drawing.Size(309, 220);
             this.lexicalView.TabIndex = 7;
             this.lexicalView.UseCompatibleStateImageBehavior = false;
             this.lexicalView.Visible = false;
-            this.lexicalView.Click += new System.EventHandler(this.lexicalView_Click);
             // 
             // lexical
             // 
@@ -170,15 +170,6 @@
             this.syntaxTreeView.TabIndex = 14;
             this.syntaxTreeView.Visible = false;
             // 
-            // errorView
-            // 
-            this.errorView.Location = new System.Drawing.Point(446, 323);
-            this.errorView.Name = "errorView";
-            this.errorView.Size = new System.Drawing.Size(309, 157);
-            this.errorView.TabIndex = 15;
-            this.errorView.UseCompatibleStateImageBehavior = false;
-            this.errorView.Visible = false;
-            // 
             // autoButton
             // 
             this.autoButton.Location = new System.Drawing.Point(581, 512);
@@ -225,17 +216,28 @@
             this.delayBox.TabIndex = 20;
             this.delayBox.Text = "1000";
             // 
+            // errorView
+            // 
+            this.errorView.HideSelection = false;
+            this.errorView.Location = new System.Drawing.Point(446, 307);
+            this.errorView.Name = "errorView";
+            this.errorView.Size = new System.Drawing.Size(309, 173);
+            this.errorView.TabIndex = 21;
+            this.errorView.UseCompatibleStateImageBehavior = false;
+            this.errorView.Visible = false;
+            this.errorView.SelectedIndexChanged += new System.EventHandler(this.errorView_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 562);
+            this.Controls.Add(this.errorView);
             this.Controls.Add(this.delayBox);
             this.Controls.Add(this.delayLab);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.autoButton);
-            this.Controls.Add(this.errorView);
             this.Controls.Add(this.syntaxTreeView);
             this.Controls.Add(this.sytaxBox);
             this.Controls.Add(this.threeAddr);
@@ -270,12 +272,12 @@
         private System.Windows.Forms.RadioButton threeAddr;
         private System.Windows.Forms.RichTextBox sytaxBox;
         private System.Windows.Forms.TreeView syntaxTreeView;
-        private System.Windows.Forms.ListView errorView;
         private System.Windows.Forms.Button autoButton;
         private System.Windows.Forms.Button pauseButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label delayLab;
         private System.Windows.Forms.TextBox delayBox;
+        private System.Windows.Forms.ListView errorView;
     }
 }
 
