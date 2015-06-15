@@ -17,7 +17,9 @@ namespace compiler
         static private SytaxNode root;
         private Timer timer = new Timer();
         private bool fileBool = true;
+        public char[,] filetxt = new char[50, 100];
         private int delay = 1000;
+        private string oldStr;
         public Form1()
         {
             InitializeComponent();
@@ -40,19 +42,11 @@ namespace compiler
                 textBox1.Text = file;
                 fileBox.Text = "";
             }
-            string fileOut = @"C:\text.txt";
-            LexicalAnalyzer.output = new StreamWriter(fileOut);
-            string errorOut = @"C:\error.txt";
-            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
-            LexicalAnalyzer.output.Write("");
-            LexicalAnalyzer.errorOutput.Write("");
-            LexicalAnalyzer.output.Close();
-            LexicalAnalyzer.errorOutput.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            lexicalView.Clear();
+            //lexicalView.Clear();
             string file = textBox1.Text;
             if (file != "")
             {
@@ -64,6 +58,7 @@ namespace compiler
             {
                 MessageBox.Show("NO FILES SELECTED！");
             }
+            //this.viewReset();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -76,8 +71,31 @@ namespace compiler
 
         private void button4_Click(object sender, EventArgs e)
         {
+            string file = textBox1.Text;
+            fileOpen(file);
             timer.Enabled = false;
             sytaxAnalyse(sender, e);
+        }
+
+        private void fileOpen(string fileName)
+        {
+            LexicalAnalyzer.input = new StreamReader(fileName, fileBool);
+            oldStr = fileBox.Text;
+            int filei = 0;            
+            int i = 0;
+            while (!LexicalAnalyzer.input.EndOfStream)
+            {
+                string strrr = LexicalAnalyzer.input.ReadLine();
+                LexicalAnalyzer.Str += strrr + '\r';
+                for (i = 0; i < strrr.Length; i++)
+                {
+                    filetxt[filei, i] = strrr.ToCharArray()[i];
+                }
+                filetxt[filei, i + 1] = '\r';
+                filei++;
+            }
+            LexicalAnalyzer.Str += '$';
+            LexicalAnalyzer.input.Close();
         }
 
         private void sytaxAnalyse(object sender, EventArgs e)
@@ -88,27 +106,10 @@ namespace compiler
                 errorView.Visible = true;
             }
             //button3_Click(sender, e);
-            string file1 = textBox1.Text;
-            StreamWriter fileSave = new StreamWriter(file1);
-            fileSave.Write(fileBox.Text);
-            fileSave.Close();
-            LexicalAnalyzer.errorList.Clear();
-            string file = textBox1.Text;
-            LexicalAnalyzer.input = new StreamReader(file,fileBool);
-            string fileOut = @"C:\text.txt";
-            LexicalAnalyzer.output = new StreamWriter(fileOut, fileBool);
-            string errorOut = @"C:\error.txt";
-            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut, fileBool);
+            LexicalAnalyzer.errorList.Clear();            
             LexicalAnalyzer lex = new LexicalAnalyzer();
             Token token = lex.nextToken();
-            string str = "";
-            while (!LexicalAnalyzer.input.EndOfStream)
-            {
-                str += LexicalAnalyzer.input.ReadLine() + '\r';
-            }
-            LexicalAnalyzer.input.Close();
-            LexicalAnalyzer.output.Close();
-            LexicalAnalyzer.errorOutput.Close();
+            //LexicalAnalyzer.input = new StreamReader(file, fileBool);
             if (LexicalAnalyzer.code == -1)
             {
                 MessageBox.Show("There are no more Tokens!");
@@ -132,11 +133,28 @@ namespace compiler
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
                 ListViewItem li = new ListViewItem();
-                li.Text = LexicalAnalyzer.erList[0, 0];
-                li.SubItems.Add(LexicalAnalyzer.erList[0, 1]);
-                li.SubItems.Add(LexicalAnalyzer.erList[0, 2]);
-                li.SubItems.Add(LexicalAnalyzer.erList[0, 3]);
+                li.Text = token.Tokentype;
+                li.SubItems.Add(token.Attributevalue);
+                li.SubItems.Add(token.Linenumber.ToString());
+                li.SubItems.Add(token.Lineposition.ToString());
                 this.errorView.Items.Add(li);
+                fileBox.Focus();
+                int x = token.Linenumber;
+                int j = token.Lineposition;
+                int count = 0;
+                for (int a = 0; a < x - 1; a++)
+                {
+                    int b = 0;
+                    while (filetxt[a, b] != '\r')
+                    {
+                        count++;
+                        b++;
+                    }
+                }
+                count = count + j - 1;
+                fileBox.Focus();
+                fileBox.Select(count, 1);
+                fileBox.SelectionColor = Color.Red;
             }
 
             if (token != null && token.Tokentype != "error")
@@ -155,7 +173,6 @@ namespace compiler
                     {
                         timer.Enabled = false;
                         MessageBox.Show("Complete!");
-                        fileBool = false;
                         output();
                         return;
                     }
@@ -326,14 +343,8 @@ namespace compiler
             }
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void viewReset()
         {
-            LexicalAnalyzer.tokenClear();
-            LexicalAnalyzer.erListClear();
-            this.lexicalView.Clear();
-            this.errorView.Clear();
-            treeStack.Clear();
-            LLparser.stackReset();
             lexicalView.Columns.Add("tokenType", 70);
             lexicalView.Columns.Add("attributeValue", 70);
             lexicalView.Columns.Add("lineNumber", 70);
@@ -349,16 +360,21 @@ namespace compiler
             errorView.GridLines = true;
             errorView.View = View.Details;
             errorView.HeaderStyle = ColumnHeaderStyle.Clickable;
-            errorView.GridLines = true;
-            string fileOut = @"C:\text.txt";
-            LexicalAnalyzer.output = new StreamWriter(fileOut);
-            string errorOut = @"C:\error.txt";
-            LexicalAnalyzer.errorOutput = new StreamWriter(errorOut);
-            LexicalAnalyzer.output.Write("");
-            LexicalAnalyzer.errorOutput.Write("");
-            LexicalAnalyzer.output.Close();
-            LexicalAnalyzer.errorOutput.Close();
-            fileBool = true;
+            errorView.FullRowSelect = true;
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            if(oldStr != fileBox.Text)
+            {
+                LexicalAnalyzer.tokenClear();
+                LexicalAnalyzer.erListClear();
+                this.lexicalView.Clear();
+                this.errorView.Clear();
+                treeStack.Clear();
+                LLparser.stackReset();
+                this.viewReset();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -416,6 +432,8 @@ namespace compiler
 
         private void autoButton_Click(object sender, EventArgs e)
         {
+            string file = textBox1.Text;
+            fileOpen(file);
             timer.Enabled = true;
             delay = Convert.ToInt32(delayBox.Text);
             timer.Interval = delay;
@@ -450,6 +468,23 @@ namespace compiler
             this.Ranks(); 
         }
 
-
+        private void errorView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int x = Convert.ToInt32(errorView.FocusedItem.SubItems[2].Text);
+            int j = Convert.ToInt32(errorView.FocusedItem.SubItems[3].Text);
+            int count = 0;
+            for (int a = 0; a < x-1; a++)
+            {
+                int b = 0;
+                while (filetxt[a, b] != '\r')
+                {
+                    count++;
+                    b++;
+                }
+            }
+            count = count + j-1;
+            fileBox.Focus();
+            fileBox.Select(count, 1);
+        }
     }
 }
