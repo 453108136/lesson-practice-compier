@@ -34,16 +34,16 @@ namespace compiler
 
         private static void init()
         {
-            Rules[0] = new LinkedList<string>(); Rules[0].AddLast("program"); Rules[0].AddLast("compoundstmt");
-            Rules[1] = new LinkedList<string>(); Rules[1].AddLast("stmt"); Rules[1].AddLast("ifstmt");
-            Rules[2] = new LinkedList<string>(); Rules[2].AddLast("stmt"); Rules[2].AddLast("whilestmt");
-            Rules[3] = new LinkedList<string>(); Rules[3].AddLast("stmt"); Rules[3].AddLast("assgstmt");
-            Rules[4] = new LinkedList<string>(); Rules[4].AddLast("stmt"); Rules[4].AddLast("compoundstmt");
-            Rules[5] = new LinkedList<string>(); Rules[5].AddLast("compoundstmt"); Rules[5].AddLast("{"); Rules[5].AddLast("stmts"); Rules[5].AddLast("}");
-            Rules[6] = new LinkedList<string>(); Rules[6].AddLast("stmts"); Rules[6].AddLast("stmt"); Rules[6].AddLast("stmts");
-            Rules[7] = new LinkedList<string>(); Rules[7].AddLast("stmts"); Rules[7].AddLast("");
-            Rules[8] = new LinkedList<string>(); Rules[8].AddLast("ifstmt"); Rules[8].AddLast("if"); Rules[8].AddLast("("); Rules[8].AddLast("boolexpr"); Rules[8].AddLast(")"); Rules[8].AddLast("then"); Rules[8].AddLast("stmt"); Rules[8].AddLast("else"); Rules[8].AddLast("stmt");
-            Rules[9] = new LinkedList<string>(); Rules[9].AddLast("whilestmt"); Rules[9].AddLast("while"); Rules[9].AddLast("("); Rules[9].AddLast("boolexpr"); Rules[9].AddLast(")"); Rules[9].AddLast("stmt");
+            Rules[0]  = new LinkedList<string>(); Rules[0] .AddLast("program"); Rules[0].AddLast("compoundstmt");
+            Rules[1]  = new LinkedList<string>(); Rules[1] .AddLast("stmt"); Rules[1].AddLast("ifstmt");
+            Rules[2]  = new LinkedList<string>(); Rules[2] .AddLast("stmt"); Rules[2].AddLast("whilestmt");
+            Rules[3]  = new LinkedList<string>(); Rules[3] .AddLast("stmt"); Rules[3].AddLast("assgstmt");
+            Rules[4]  = new LinkedList<string>(); Rules[4] .AddLast("stmt"); Rules[4].AddLast("compoundstmt");
+            Rules[5]  = new LinkedList<string>(); Rules[5] .AddLast("compoundstmt"); Rules[5].AddLast("{"); Rules[5].AddLast("stmts"); Rules[5].AddLast("}");
+            Rules[6]  = new LinkedList<string>(); Rules[6] .AddLast("stmts"); Rules[6].AddLast("stmt"); Rules[6].AddLast("stmts");
+            Rules[7]  = new LinkedList<string>(); Rules[7] .AddLast("stmts"); Rules[7].AddLast("");
+            Rules[8]  = new LinkedList<string>(); Rules[8] .AddLast("ifstmt"); Rules[8].AddLast("if"); Rules[8].AddLast("("); Rules[8].AddLast("boolexpr"); Rules[8].AddLast(")"); Rules[8].AddLast("then"); Rules[8].AddLast("stmt"); Rules[8].AddLast("else"); Rules[8].AddLast("stmt");
+            Rules[9]  = new LinkedList<string>(); Rules[9] .AddLast("whilestmt"); Rules[9].AddLast("while"); Rules[9].AddLast("("); Rules[9].AddLast("boolexpr"); Rules[9].AddLast(")"); Rules[9].AddLast("stmt");
             Rules[10] = new LinkedList<string>(); Rules[10].AddLast("assgstmt"); Rules[10].AddLast("identifier"); Rules[10].AddLast("="); Rules[10].AddLast("arithexpr"); Rules[10].AddLast(";");
             Rules[11] = new LinkedList<string>(); Rules[11].AddLast("boolexpr"); Rules[11].AddLast("arithexpr"); Rules[11].AddLast("boolop"); Rules[11].AddLast("arithexpr");
             Rules[12] = new LinkedList<string>(); Rules[12].AddLast("boolop"); Rules[12].AddLast("<");
@@ -63,7 +63,6 @@ namespace compiler
             Rules[26] = new LinkedList<string>(); Rules[26].AddLast("simpleexpr"); Rules[26].AddLast("number");
             Rules[27] = new LinkedList<string>(); Rules[27].AddLast("simpleexpr"); Rules[27].AddLast("("); Rules[27].AddLast("arithexpr"); Rules[27].AddLast(")");
             stackReset();
-
         }
 
         static public void stackReset()
@@ -90,7 +89,7 @@ namespace compiler
 
         private static string gen(string op, string result, string para1, string para2)
         {
-            return "    " + op + "," + result + "," + para1 + "," + para2 + "\r";
+            return "   " + op + "\t" + result + "," + para1 + "," + para2 + "\r";
         }
 
         private static string gen(string lable)
@@ -263,7 +262,7 @@ namespace compiler
                 case 18:
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
-                    node.Code += gen("add", node.NodeList[1].Place.Key, node.Before.Place.Key,node.NodeList[1].Place.Key);
+                    node.Code += gen("add", node.Place.Key, node.Before.Place.Key,node.NodeList[1].Place.Key);
                     node.NodeList[1].Value = (stringValue(node.NodeList[1].Value) + stringValue(node.Before.Value)).ToString();
                     if(node.NodeList[2].Value == null)
                     {
@@ -277,7 +276,7 @@ namespace compiler
                 case 19:
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
-                    node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
+                    node.Code += gen("sub", node.Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
                     node.NodeList[1].Value = (stringValue(node.Before.Value) - stringValue(node.NodeList[1].Value)).ToString() ;
                     if (node.NodeList[2].Value == null)
                     {
