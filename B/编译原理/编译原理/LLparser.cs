@@ -9,9 +9,24 @@ namespace compiler
 {
     class LLparser
     {
-        static private LinkedList<string>[] Rules = new LinkedList<string>[28];
+        static private LinkedList<string>[] Rules = new LinkedList<string>[30];
         static private int loopNum = 1;
         static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
+        static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
+
+        internal static Stack<SytaxNode> TreeStack
+        {
+            get { return LLparser.treeStack; }
+            set { LLparser.treeStack = value; }
+        }
+        static private Token token;
+
+        internal static Token Token
+        {
+            get { return LLparser.token; }
+            set { LLparser.token = value; }
+        }
+
         static private Stack<string> stack = new Stack<string>();
 
         public static Stack<string> Stack
@@ -25,7 +40,14 @@ namespace compiler
             get { return LLparser.table; }
         }
 
-        //static LLparser()
+        static private SytaxNode root;
+
+        internal static SytaxNode Root
+        {
+            get { return LLparser.root; }
+            set { LLparser.root = value; }
+        }
+
         public void make()
         {
             init();
@@ -62,11 +84,14 @@ namespace compiler
             Rules[25] = new LinkedList<string>(); Rules[25].AddLast("simpleexpr"); Rules[25].AddLast("identifier");
             Rules[26] = new LinkedList<string>(); Rules[26].AddLast("simpleexpr"); Rules[26].AddLast("number");
             Rules[27] = new LinkedList<string>(); Rules[27].AddLast("simpleexpr"); Rules[27].AddLast("("); Rules[27].AddLast("arithexpr"); Rules[27].AddLast(")");
+            Rules[28] = new LinkedList<string>(); Rules[28].AddLast("number"); Rules[28].AddLast("int");
+            Rules[29] = new LinkedList<string>(); Rules[29].AddLast("number"); Rules[29].AddLast("real");
             stackReset();
         }
 
         static public void stackReset()
         {
+            Stack.Clear();
             Stack.Push("$");
             Stack.Push("program");
 
@@ -95,6 +120,49 @@ namespace compiler
         private static string gen(string lable)
         {
             return lable + ":\r";
+        }
+
+        private static string numberType(string type1, string type2)
+        {
+            if(type1 == "int" && type2 == "int")
+            {
+                return "int";
+            }
+            else
+            {
+                if(type1 == "real" && type2 == "real" || type1 == "int" && type2 == "real" || type1 == "real" && type2 == "int")
+                {
+                    return "real";
+                }
+            }
+            return "";
+        }
+
+
+        public static void ergodic(SytaxNode node)
+        {
+            if (node.NextNode != null)
+            {
+                ((SytaxNode)node.NextNode).Before = node;
+            }
+            if (node.FirstNode != null)
+            {
+                node.NodeList = new List<SytaxNode>();
+                SytaxNode childNode = (SytaxNode)node.FirstNode;
+                while (childNode.NextNode != null)
+                {
+                    node.NodeList.Add(childNode);
+                    childNode = (SytaxNode)childNode.NextNode;
+                }
+                node.NodeList.Add(childNode);
+                LLparser.inherit(node, node.State);
+                foreach (SytaxNode ergodicNode in node.NodeList)
+                {
+                    ergodic(ergodicNode);
+                }
+                LLparser.synthetical(node, node.State);
+            }
+            return;
         }
 
         static public void inherit(SytaxNode node, int state)
@@ -203,10 +271,12 @@ namespace compiler
                     node.Code += gen("jmp", "", "", node.BeginAddr) + gen(node.AfterAddr);
                     break;
                 case 10:
-                    node.NodeList[0].Place = SymbolTable.addSymbol(node.NodeList[0].Id, "double", node.NodeList[0].Line, node.NodeList[0].Position);
+                    node.NodeList[0].Type = node.NodeList[2].Type;
+                    node.NodeList[0].Place = SymbolTable.addSymbol(node.NodeList[0].Id, node.NodeList[0].Type, node.NodeList[0].Line, node.NodeList[0].Position);
                     node.Code = node.NodeList[2].Code + gen("mov", node.NodeList[0].Place.Key, "", node.NodeList[2].Place.Key);
                     break;
                 case 11:
+                    node.Type = "bool";
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[0].Code + node.NodeList[2].Code;
                     switch (node.NodeList[1].Value)
@@ -244,22 +314,22 @@ namespace compiler
                     node.Value = "==";
                     break;
                 case 17:
-                    //node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
                     if(node.NodeList[1].Value == null)
                     {
+                        node.Type = node.NodeList[0].Type;
                         node.Place = node.NodeList[0].Place;
-                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                         node.Value = node.NodeList[0].Value;
                     }
                     else
                     {
+                        node.Type = node.NodeList[1].Type;
                         node.Place = node.NodeList[1].Place;
-                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
                         node.Value = node.NodeList[1].Value;
                     }
                     break;
                 case 18:
+                    node.Type = numberType(node.Before.Place.Type, node.NodeList[1].Place.Type);
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
                     node.Code += gen("add", node.Place.Key, node.Before.Place.Key,node.NodeList[1].Place.Key);
@@ -274,6 +344,7 @@ namespace compiler
                     }
                     break;
                 case 19:
+                    node.Type = numberType(node.Before.Place.Type, node.NodeList[1].Place.Type);
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
                     node.Code += gen("sub", node.Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
@@ -292,22 +363,22 @@ namespace compiler
                     node.Value = null;
                     break;
                 case 21:
-                    //node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[0].Code + node.NodeList[1].Code;
                     if (node.NodeList[1].Value == null)
                     {
+                        node.Type = node.NodeList[0].Type;
                         node.Place = node.NodeList[0].Place;
-                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                         node.Value = node.NodeList[0].Value;
                     }
                     else
                     {
+                        node.Type = node.NodeList[1].Type;
                         node.Place = node.NodeList[1].Place;
-                        //node.Code += gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
                         node.Value = node.NodeList[1].Value;
                     }
                     break;
                 case 22:
+                    node.Type = numberType(node.Before.Place.Type, node.NodeList[1].Place.Type);
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
                     node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
@@ -322,6 +393,7 @@ namespace compiler
                     }
                     break;
                 case 23:
+                    node.Type = numberType(node.Before.Place.Type, node.NodeList[1].Place.Type);
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Code = node.NodeList[1].Code + node.NodeList[2].Code;
                     node.Code += gen("sub", node.NodeList[1].Place.Key, node.Before.Place.Key, node.NodeList[1].Place.Key);
@@ -340,21 +412,33 @@ namespace compiler
                     node.Value = null;
                     break;
                 case 25:
+                    node.Type = node.NodeList[0].Type;
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Value = node.NodeList[0].Value;
                     node.NodeList[0].Place = SymbolTable.getSymbol(node.NodeList[0].Id);
                     node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Place.Key);
                     break;
                 case 26:
+                    node.Code = node.NodeList[0].Code;
+                    node.Type = node.NodeList[0].Type;
+                    node.Place = node.NodeList[0].Place;
+                    break;
+                case 27:
+                    node.Value = node.NodeList[1].Value;
+                    node.Place = node.NodeList[1].Place;
+                    node.Type = node.NodeList[1].Type;
+                    break;
+                case 28:
+                    node.Type = "int";
                     node.Place = SymbolTable.newtemp(node.Type);
                     node.Value = node.NodeList[0].Value;
                     node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Value);
                     break;
-                case 27:
-                    //node.Place = SymbolTable.newtemp(node.Type);
-                    node.Value = node.NodeList[1].Value;
-                    node.Place = node.NodeList[1].Place;
-                    //node.Code = gen("mov", node.Place.Key, "", node.NodeList[1].Place.Key);
+                case 29:
+                    node.Type = "real";
+                    node.Place = SymbolTable.newtemp(node.Type);
+                    node.Value = node.NodeList[0].Value;
+                    node.Code = gen("mov", node.Place.Key, "", node.NodeList[0].Value);
                     break;
             }
 
@@ -371,7 +455,7 @@ namespace compiler
 
         static public bool isTerminator(string type)
         {
-            for(int i=0;i<28;i++){
+            for(int i=0;i<Rules.Length;i++){
                 if (type == Rules[i].First.Value)
                 {
                     return false;
@@ -381,7 +465,7 @@ namespace compiler
         }
 
         static private void createTable(){
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < Rules.Length; i++)
             {
                 string terminator = Rules[i].First.Value;
                 if (!table.ContainsKey(terminator))
@@ -422,7 +506,7 @@ namespace compiler
             }
             else
             {
-                for(int i = 0; i<28; i++)
+                for(int i = 0; i<Rules.Length; i++)
                 {
                     string terminator = Rules[i].First.Value;
                     if (terminator == symbol)
@@ -451,47 +535,201 @@ namespace compiler
             for (int i = 0; i < 28; i++)
             {
                 LinkedListNode<string> node = Rules[i].First.Next;
-               // if (node.Value == symbol)
-                //{
-                    while (true)
+                while (true)
+                {
+                    if (node.Value == symbol)
                     {
-                        if (node.Value == symbol)
+                        LinkedListNode<string> tempNode = node;
+                        HashSet<string> nextFirst = null;
+                        do
                         {
-                            LinkedListNode<string> tempNode = node;
-                            HashSet<string> nextFirst = null;
-                            do
+                            if (tempNode.Next == null)
                             {
-                                if (tempNode.Next == null)
+                                if (symbol != Rules[i].First.Value)
                                 {
-                                    if (symbol != Rules[i].First.Value)
-                                    {
-                                        followSymbols.UnionWith(follow(Rules[i].First.Value));
-                                    }
-                                    break;
+                                    followSymbols.UnionWith(follow(Rules[i].First.Value));
                                 }
-                                tempNode = tempNode.Next;
-                                nextFirst = first(tempNode.Value);
-                                followSymbols.UnionWith(nextFirst);
-                                if (followSymbols.Contains(""))
+                                break;
+                            }
+                            tempNode = tempNode.Next;
+                            nextFirst = first(tempNode.Value);
+                            followSymbols.UnionWith(nextFirst);
+                            if (followSymbols.Contains(""))
+                            {
+                                followSymbols.Remove("");
+                            }
+                        }
+                        while (nextFirst.Contains(""));
+                    }
+                    if (node.Next != null)
+                    {
+                        node = node.Next;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            return followSymbols;            
+        }
+        static public int sytaxAnalyse(object sender, EventArgs e)//语法分析 返回分析结果 -1：错误 -2：错误并分析结束 0：正确 1：正确的结尾
+        {
+            if (token != null && token.Tokentype != "error")
+            {
+
+                string symbol = LLparser.Stack.Peek();
+                while (symbol == "///")
+                {
+                    LLparser.Stack.Pop();
+                    treeStack.Pop();
+                    symbol = LLparser.Stack.Peek();
+                }
+                if (symbol == "$")
+                {
+                    if (token.Tokentype == "$")
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong token type!");
+                    }
+                }
+                if (LLparser.isTerminator(symbol))
+                {
+                    SytaxNode newNode = new SytaxNode(symbol);
+                    if (token.Tokentype == "int" || token.Tokentype == "real")
+                    {
+                        newNode.Value = token.Attributevalue;
+                    }
+                    else
+                    {
+                        if (token.Tokentype == "identifier")
+                        {
+                            newNode.Id = token.Attributevalue;
+                        }
+                    }
+                    treeStack.Peek().Nodes.Add(newNode);
+                    LLparser.Stack.Pop();
+                    if (symbol != token.Tokentype)
+                    {
+                        symbol = LLparser.Stack.Peek();
+                        while (symbol != "stmts" && token.Tokentype != "$")
+                        {
+                            newNode = new SytaxNode(symbol);
+                            treeStack.Peek().Nodes.Add(newNode);
+                            LLparser.Stack.Pop();
+                            symbol = LLparser.Stack.Peek();
+                            while (symbol == "///")
+                            {
+                                LLparser.Stack.Pop();
+                                treeStack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                            }
+                        }
+                        if (token.Tokentype == "$")
+                        {
+                            return -2;
+                        }
+                        return -1;
+                    }
+                }
+                else
+                {
+
+                    while (!LLparser.isTerminator(symbol))
+                    {
+                        if (LLparser.Table[symbol].ContainsKey(token.Tokentype))
+                        {
+                            SytaxNode newNode = new SytaxNode(symbol);
+                            if (treeStack.Count == 0)
+                            {
+                                treeStack.Push(newNode);
+                                root = treeStack.Peek();
+                            }
+                            else
+                            {
+                                treeStack.Peek().Nodes.Add(newNode);
+                                treeStack.Push(newNode);
+                            }
+                            LLparser.Stack.Pop();
+                            LLparser.Stack.Push("///");
+                            newNode.State = LLparser.Table[symbol][token.Tokentype];
+                            LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
+                            symbol = LLparser.Stack.Peek();
+                            if (symbol == "")
+                            {
+                                newNode = new SytaxNode(symbol);
+                                treeStack.Peek().Nodes.Add(newNode);
+                                LLparser.Stack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                                while (symbol == "///")
                                 {
-                                    followSymbols.Remove("");
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
                                 }
                             }
-                            while (nextFirst.Contains(""));
-                        }
-                        if (node.Next != null)
-                        {
-                            node = node.Next;
+                            else
+                            {
+                                while (symbol == "///")
+                                {
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
+                                }
+                            }
                         }
                         else
                         {
-                            //followSymbols.UnionWith(follow(Rules[i].First.Value));
-                            break;
+                            symbol = LLparser.Stack.Peek();
+                            while (symbol != "stmts" && token.Tokentype != "$")
+                            {
+                                SytaxNode newNode = new SytaxNode(symbol);
+                                treeStack.Peek().Nodes.Add(newNode);
+                                LLparser.Stack.Pop();
+                                symbol = LLparser.Stack.Peek();
+                                while (symbol == "///")
+                                {
+                                    LLparser.Stack.Pop();
+                                    treeStack.Pop();
+                                    symbol = LLparser.Stack.Peek();
+                                }
+                                if (symbol == "$")
+                                {
+                                    return -2;
+                                }
+                            }
+                            if (token.Tokentype == "$")
+                            {
+                                return -2;
+                            }
+                            return -1;
                         }
-                    }                   
-               // }
+                    }
+                    SytaxNode lastNode = new SytaxNode(symbol);
+                    if (token.Tokentype == "int" || token.Tokentype == "real")
+                    {
+                        lastNode.Value = token.Attributevalue;
+                    }
+                    else
+                    {
+                        if (token.Tokentype == "identifier")
+                        {
+                            lastNode.Id = token.Attributevalue;
+                        }
+                    }
+                    lastNode.Line = token.Linenumber;
+                    lastNode.Position = token.Lineposition;
+                    treeStack.Peek().Nodes.Add(lastNode);
+                    treeStack.Push(lastNode);
+                    LLparser.Stack.Pop();
+                    treeStack.Pop();
+                }
             }
-            return followSymbols;            
-        }        
+            return 0;
+        }
     }
+
 }
