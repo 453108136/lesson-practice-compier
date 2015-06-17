@@ -26,7 +26,7 @@ namespace compiler
         static public int position, line = 1, col = 0, code=0; //position用来记录字符位于整个文档的位置，line为行数，col为列数
 
 
-        static public string[,] erList = new string [10000,4];
+        static public string[,] erList = new string [1000,4];
         public static int countColumError = 0;
 
         public static void erListClear() //清空erList
@@ -296,16 +296,16 @@ namespace compiler
                                 {
                                     Token token = new Token("identifier", attrva, line, col - coun);
                                     //output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\r');
-                                    if (SymbolTable.Table.ContainsKey(attrva))
-                                    {
-                                        SymbolTable.Table[attrva].AddFirst(new Symbol(attrva, "identifier", line, col - coun));
-                                    }
-                                    else
-                                    {
-                                        LinkedList<Symbol> linkedList = new LinkedList<Symbol>();
-                                        linkedList.AddFirst(new Symbol(attrva, "identifier", line, col - coun));
-                                        SymbolTable.Table.Add(attrva, linkedList);
-                                    }
+                                    //if (SymbolTable.Table.ContainsKey(attrva))
+                                    //{
+                                    //    SymbolTable.Table[attrva].AddFirst(new Symbol(attrva, "identifier", line, col - coun));
+                                    //}
+                                    //else
+                                    //{
+                                    //    LinkedList<Symbol> linkedList = new LinkedList<Symbol>();
+                                    //    linkedList.AddFirst(new Symbol(attrva, "identifier", line, col - coun));
+                                    //    SymbolTable.Table.Add(attrva, linkedList);
+                                    //}
                                     state = -1;
                                     coun = 0;
                                     attrva = "";
@@ -325,7 +325,7 @@ namespace compiler
                             { state = 13; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Token token = new Token("number", attrva, line, col - coun);
+                                Token token = new Token("int", attrva, line, col - coun);
                                 //output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\r');
                                 state = -1;
                                 coun = 0;
@@ -361,7 +361,7 @@ namespace compiler
                             { state = 13; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Token token = new Token("number", attrva, line, col - coun);
+                                Token token = new Token("real", attrva, line, col - coun);
                                 //output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\r');
                                 state = -1;
                                 coun = 0;
@@ -415,7 +415,7 @@ namespace compiler
                             { state = 15; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Token token = new Token("number", attrva, line, col - coun);
+                                Token token = new Token("real", attrva, line, col - coun);
                                 //output.Write(token.Tokentype + " '" + token.Attributevalue + "' linenumber:" + token.Linenumber + " lineposition:" + token.Lineposition + '\r');
                                 state = -1;
                                 coun = 0;

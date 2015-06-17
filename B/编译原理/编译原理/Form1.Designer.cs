@@ -46,6 +46,7 @@
             this.delayLab = new System.Windows.Forms.Label();
             this.delayBox = new System.Windows.Forms.TextBox();
             this.errorView = new System.Windows.Forms.ListView();
+            this.LLerrorView = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // textBox1
@@ -69,7 +70,7 @@
             // 
             this.fileBox.Location = new System.Drawing.Point(43, 81);
             this.fileBox.Name = "fileBox";
-            this.fileBox.Size = new System.Drawing.Size(366, 399);
+            this.fileBox.Size = new System.Drawing.Size(397, 594);
             this.fileBox.TabIndex = 2;
             this.fileBox.Text = "";
             this.fileBox.WordWrap = false;
@@ -79,7 +80,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(43, 512);
+            this.button2.Location = new System.Drawing.Point(43, 692);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 3;
@@ -89,7 +90,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(181, 512);
+            this.button3.Location = new System.Drawing.Point(201, 692);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 4;
@@ -99,7 +100,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(308, 512);
+            this.button4.Location = new System.Drawing.Point(365, 692);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 5;
@@ -109,10 +110,10 @@
             // 
             // lexicalView
             // 
-            this.lexicalView.Location = new System.Drawing.Point(446, 81);
+            this.lexicalView.Location = new System.Drawing.Point(485, 81);
             this.lexicalView.MultiSelect = false;
             this.lexicalView.Name = "lexicalView";
-            this.lexicalView.Size = new System.Drawing.Size(309, 220);
+            this.lexicalView.Size = new System.Drawing.Size(373, 404);
             this.lexicalView.TabIndex = 7;
             this.lexicalView.UseCompatibleStateImageBehavior = false;
             this.lexicalView.Visible = false;
@@ -120,7 +121,7 @@
             // lexical
             // 
             this.lexical.AutoSize = true;
-            this.lexical.Location = new System.Drawing.Point(446, 41);
+            this.lexical.Location = new System.Drawing.Point(485, 41);
             this.lexical.Name = "lexical";
             this.lexical.Size = new System.Drawing.Size(47, 16);
             this.lexical.TabIndex = 8;
@@ -132,7 +133,7 @@
             // syntax
             // 
             this.syntax.AutoSize = true;
-            this.syntax.Location = new System.Drawing.Point(581, 41);
+            this.syntax.Location = new System.Drawing.Point(654, 41);
             this.syntax.Name = "syntax";
             this.syntax.Size = new System.Drawing.Size(47, 16);
             this.syntax.TabIndex = 9;
@@ -144,7 +145,7 @@
             // threeAddr
             // 
             this.threeAddr.AutoSize = true;
-            this.threeAddr.Location = new System.Drawing.Point(708, 41);
+            this.threeAddr.Location = new System.Drawing.Point(803, 41);
             this.threeAddr.Name = "threeAddr";
             this.threeAddr.Size = new System.Drawing.Size(59, 16);
             this.threeAddr.TabIndex = 10;
@@ -155,24 +156,24 @@
             // 
             // sytaxBox
             // 
-            this.sytaxBox.Location = new System.Drawing.Point(446, 81);
+            this.sytaxBox.Location = new System.Drawing.Point(485, 81);
             this.sytaxBox.Name = "sytaxBox";
-            this.sytaxBox.Size = new System.Drawing.Size(309, 399);
+            this.sytaxBox.Size = new System.Drawing.Size(373, 594);
             this.sytaxBox.TabIndex = 13;
             this.sytaxBox.Text = "";
             this.sytaxBox.Visible = false;
             // 
             // syntaxTreeView
             // 
-            this.syntaxTreeView.Location = new System.Drawing.Point(446, 81);
+            this.syntaxTreeView.Location = new System.Drawing.Point(485, 81);
             this.syntaxTreeView.Name = "syntaxTreeView";
-            this.syntaxTreeView.Size = new System.Drawing.Size(309, 399);
+            this.syntaxTreeView.Size = new System.Drawing.Size(373, 404);
             this.syntaxTreeView.TabIndex = 14;
             this.syntaxTreeView.Visible = false;
             // 
             // autoButton
             // 
-            this.autoButton.Location = new System.Drawing.Point(581, 512);
+            this.autoButton.Location = new System.Drawing.Point(673, 692);
             this.autoButton.Name = "autoButton";
             this.autoButton.Size = new System.Drawing.Size(75, 23);
             this.autoButton.TabIndex = 16;
@@ -182,7 +183,7 @@
             // 
             // pauseButton
             // 
-            this.pauseButton.Location = new System.Drawing.Point(692, 512);
+            this.pauseButton.Location = new System.Drawing.Point(783, 692);
             this.pauseButton.Name = "pauseButton";
             this.pauseButton.Size = new System.Drawing.Size(75, 23);
             this.pauseButton.TabIndex = 17;
@@ -202,7 +203,7 @@
             // delayLab
             // 
             this.delayLab.AutoSize = true;
-            this.delayLab.Location = new System.Drawing.Point(429, 517);
+            this.delayLab.Location = new System.Drawing.Point(483, 697);
             this.delayLab.Name = "delayLab";
             this.delayLab.Size = new System.Drawing.Size(77, 12);
             this.delayLab.TabIndex = 19;
@@ -210,7 +211,7 @@
             // 
             // delayBox
             // 
-            this.delayBox.Location = new System.Drawing.Point(501, 514);
+            this.delayBox.Location = new System.Drawing.Point(580, 694);
             this.delayBox.Name = "delayBox";
             this.delayBox.Size = new System.Drawing.Size(58, 21);
             this.delayBox.TabIndex = 20;
@@ -219,19 +220,30 @@
             // errorView
             // 
             this.errorView.HideSelection = false;
-            this.errorView.Location = new System.Drawing.Point(446, 307);
+            this.errorView.Location = new System.Drawing.Point(485, 502);
             this.errorView.Name = "errorView";
-            this.errorView.Size = new System.Drawing.Size(309, 173);
+            this.errorView.Size = new System.Drawing.Size(373, 173);
             this.errorView.TabIndex = 21;
             this.errorView.UseCompatibleStateImageBehavior = false;
             this.errorView.Visible = false;
             this.errorView.SelectedIndexChanged += new System.EventHandler(this.errorView_SelectedIndexChanged);
             // 
+            // LLerrorView
+            // 
+            this.LLerrorView.Location = new System.Drawing.Point(485, 502);
+            this.LLerrorView.Name = "LLerrorView";
+            this.LLerrorView.Size = new System.Drawing.Size(373, 173);
+            this.LLerrorView.TabIndex = 22;
+            this.LLerrorView.UseCompatibleStateImageBehavior = false;
+            this.LLerrorView.Visible = false;
+            this.LLerrorView.SelectedIndexChanged += new System.EventHandler(this.LLerrorView_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(802, 562);
+            this.ClientSize = new System.Drawing.Size(924, 731);
+            this.Controls.Add(this.LLerrorView);
             this.Controls.Add(this.errorView);
             this.Controls.Add(this.delayBox);
             this.Controls.Add(this.delayLab);
@@ -278,6 +290,7 @@
         private System.Windows.Forms.Label delayLab;
         private System.Windows.Forms.TextBox delayBox;
         private System.Windows.Forms.ListView errorView;
+        private System.Windows.Forms.ListView LLerrorView;
     }
 }
 

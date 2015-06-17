@@ -13,7 +13,7 @@ namespace compiler
 {
     public partial class Form1 : Form
     {
-        static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
+        //static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
         static private SytaxNode root;
         private Timer timer = new Timer();
         private bool fileBool = true;
@@ -41,6 +41,19 @@ namespace compiler
                 string file = fileDialog.FileName;
                 textBox1.Text = file;
                 fileBox.Text = "";
+                LexicalAnalyzer.Str = "";
+                string file1 = textBox1.Text;
+                this.fileOpen(file1);
+                if (file1 != "")
+                {
+                    StreamReader fileOpenReader = new StreamReader(file);
+                    fileBox.Text = fileOpenReader.ReadToEnd();
+                    fileOpenReader.Close();
+                }
+                else
+                {
+                    MessageBox.Show("NO FILES SELECTED！");
+                }
             }
         }
 
@@ -49,12 +62,12 @@ namespace compiler
             //lexicalView.Clear();
             LexicalAnalyzer.Str = "";
             string file = textBox1.Text;
-            fileOpen(file);
+            this.fileOpen(file);
             if (file != "")
             {
-                StreamReader fileOpen1 = new StreamReader(file);
-                fileBox.Text = fileOpen1.ReadToEnd();
-                fileOpen1.Close();
+                StreamReader fileOpenReader = new StreamReader(file);
+                fileBox.Text = fileOpenReader.ReadToEnd();
+                fileOpenReader.Close();
             }
             else
             {
@@ -65,7 +78,9 @@ namespace compiler
 
         private void button3_Click(object sender, EventArgs e)
         {
+            LexicalAnalyzer.Str = "";
             string file = textBox1.Text;
+            this.fileOpen(file);
             StreamWriter fileSave = new StreamWriter(file);
             fileSave.Write(fileBox.Text);
             fileSave.Close();
@@ -73,8 +88,8 @@ namespace compiler
 
         private void button4_Click(object sender, EventArgs e)
         {
-            //string file = textBox1.Text;
-            //fileOpen(file);
+            string file = textBox1.Text;
+            fileOpen(file);
             timer.Enabled = false;
             sytaxAnalyse(sender, e);
         }
@@ -108,7 +123,7 @@ namespace compiler
                 errorView.Visible = true;
             }
             button3_Click(sender, e);
-            LexicalAnalyzer.errorList.Clear();            
+            LexicalAnalyzer.errorList.Clear();      
             LexicalAnalyzer lex = new LexicalAnalyzer();
             Token token = lex.nextToken();
             //LexicalAnalyzer.input = new StreamReader(file, fileBool);
@@ -158,211 +173,216 @@ namespace compiler
                 fileBox.Select(count, 1);
                 fileBox.SelectionColor = Color.Red;
             }
-
-            if (token != null && token.Tokentype != "error")
+            LLparser.Token = token;
+            switch(LLparser.sytaxAnalyse(sender, e))
             {
-
-                string symbol = LLparser.Stack.Peek();
-                while (symbol == "///")
-                {
-                    LLparser.Stack.Pop();
-                    treeStack.Pop();
-                    symbol = LLparser.Stack.Peek();
-                }
-                if (symbol == "$")
-                {
-                    if (token.Tokentype == "$")
+                case -1:
+                    if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
                     {
-                        timer.Enabled = false;
-                        MessageBox.Show("Complete!");
-                        output();
-                        return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Wrong token type!");
-                    }
-                }
-                if (LLparser.isTerminator(symbol))
-                {
-                    SytaxNode newNode = new SytaxNode(symbol);
-                    treeStack.Peek().Nodes.Add(newNode);
-                    LLparser.Stack.Pop();
-                    if (symbol != token.Tokentype)
-                    {
-                        //MessageBox.Show("Wrong token type!");
-                        symbol = LLparser.Stack.Peek();
-                        while (symbol != "stmts" && token.Tokentype != "$")
+                        ListViewItem li = new ListViewItem();
+                        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                        this.LLerrorView.Items.Add(li);
+                        int bef = 2;
+                        if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
                         {
-                            newNode = new SytaxNode(symbol);
-                            treeStack.Peek().Nodes.Add(newNode);
-                            LLparser.Stack.Pop();
-                            symbol = LLparser.Stack.Peek();
-                            while (symbol == "///")
+                            int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                            int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            int count = 0;
+                            for (int a = 0; a < x - 1; a++)
                             {
-                                LLparser.Stack.Pop();
-                                treeStack.Pop();
-                                symbol = LLparser.Stack.Peek();
-                            }
-                        }
-                        if (token.Tokentype == "$")
-                        {
-                            fileBool = false;
-                            timer.Enabled = false;
-                            return;
-                        }
-                        return;
-                    }
-                }
-                else
-                {
-
-                    while (!LLparser.isTerminator(symbol))
-                    {
-                        if (LLparser.Table[symbol].ContainsKey(token.Tokentype))
-                        {
-                            SytaxNode newNode = new SytaxNode(symbol);
-                            if (treeStack.Count == 0)
-                            {
-                                treeStack.Push(newNode);
-                                root = treeStack.Peek();
-                            }
-                            else
-                            {
-                                treeStack.Peek().Nodes.Add(newNode);
-                                treeStack.Push(newNode);
-                            }
-                            LLparser.Stack.Pop();
-                            LLparser.Stack.Push("///");
-                            newNode.State = LLparser.Table[symbol][token.Tokentype];
-                            LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
-                            symbol = LLparser.Stack.Peek();
-                            if (symbol == "")
-                            {
-                                newNode = new SytaxNode(symbol);
-                                treeStack.Peek().Nodes.Add(newNode);
-                                LLparser.Stack.Pop();
-                                symbol = LLparser.Stack.Peek();
-                                while (symbol == "///")
+                                int b = 0;
+                                while (filetxt[a, b] != '\r')
                                 {
-                                    LLparser.Stack.Pop();
-                                    treeStack.Pop();
-                                    symbol = LLparser.Stack.Peek();
+                                    count++;
+                                    b++;
                                 }
                             }
-                            else
-                            {
-                                while (symbol == "///")
-                                {
-                                    LLparser.Stack.Pop();
-                                    treeStack.Pop();
-                                    symbol = LLparser.Stack.Peek();
-                                }
-                            }
+                            count = count + j;
+                            fileBox.Focus();
+                            fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                            fileBox.SelectionBackColor = Color.Yellow;
                         }
                         else
                         {
-                            //MessageBox.Show("Wrong token type!");
-                            symbol = LLparser.Stack.Peek();
-                            while (symbol != "stmts" && token.Tokentype != "$")
+                            if (LLparser.ErrorList.Count > 1)
                             {
-                                SytaxNode newNode = new SytaxNode(symbol);
-                                treeStack.Peek().Nodes.Add(newNode);
-                                LLparser.Stack.Pop();
-                                symbol = LLparser.Stack.Peek();
-                                while (symbol == "///")
+                                while (LLparser.ErrorList[LLparser.ErrorList.Count - bef][5] == "True")
                                 {
-                                    LLparser.Stack.Pop();
-                                    treeStack.Pop();
-                                    symbol = LLparser.Stack.Peek();
+                                    bef++;
                                 }
-                                if(symbol == "$")
+                                int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][0]);
+                                int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][1]);
+                                int count = 0;
+                                for (int a = 0; a < x - 1; a++)
                                 {
-                                    fileBool = false;
-                                    timer.Enabled = false;
-                                    return;
+                                    int b = 0;
+                                    while (filetxt[a, b] != '\r')
+                                    {
+                                        count++;
+                                        b++;
+                                    }
                                 }
+                                count = count + j;
+                                int z = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                                int y = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                                int count1 = 0;
+                                for (int a = 0; a < z - 1; a++)
+                                {
+                                    int b = 0;
+                                    while (filetxt[a, b] != '\r')
+                                    {
+                                        count1++;
+                                        b++;
+                                    }
+                                }
+                                count1 = count1 + y;
+                                fileBox.Focus();
+                                fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                                fileBox.SelectionBackColor = Color.Yellow;
                             }
-                            if (token.Tokentype == "$")
-                            {
-                                fileBool = false;
-                                timer.Enabled = false;
-                                return;
-                            }
-                            return;
                         }
                     }
-                    //while (symbol == "")
-                    //{
-                    // SytaxNode newNode = new SytaxNode(symbol);
-                    //treeStack.Pop().Nodes.Add(newNode);
-                    //symbol = LLparser.Stack.Pop();
-                    // }
-                    SytaxNode lastNode = new SytaxNode(symbol);
-                    if (token.Tokentype == "number")
+                    break;
+                case -2:
+                    fileBool = false;
+                    timer.Enabled = false;
+                    MessageBox.Show("There's something wrong with sytax!");
+                    if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
                     {
-                        lastNode.Value = token.Attributevalue;
-                    }
-                    else
-                    {
-                        if (token.Tokentype == "identifier")
+                        ListViewItem li = new ListViewItem();
+                        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                        this.LLerrorView.Items.Add(li);
+                        int bef = 2;
+                        if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
                         {
-                            lastNode.Id = token.Attributevalue;
+                            int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                            int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            int count = 0;
+                            for (int a = 0; a < x - 1; a++)
+                            {
+                                int b = 0;
+                                while (filetxt[a, b] != '\r')
+                                {
+                                    count++;
+                                    b++;
+                                }
+                            }
+                            count = count + j;
+                            fileBox.Focus();
+                            fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                            fileBox.SelectionBackColor = Color.Yellow;
+                        }
+                        else
+                        {
+                            if (LLparser.ErrorList.Count > 1)
+                            {
+                                while (LLparser.ErrorList[LLparser.ErrorList.Count - bef][5] == "True")
+                                {
+                                    bef++;
+                                }
+                                int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][0]);
+                                int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][1]);
+                                int count = 0;
+                                for (int a = 0; a < x - 1; a++)
+                                {
+                                    int b = 0;
+                                    while (filetxt[a, b] != '\r')
+                                    {
+                                        count++;
+                                        b++;
+                                    }
+                                }
+                                count = count + j;
+                                int z = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                                int y = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                                int count1 = 0;
+                                for (int a = 0; a < z - 1; a++)
+                                {
+                                    int b = 0;
+                                    while (filetxt[a, b] != '\r')
+                                    {
+                                        count++;
+                                        b++;
+                                    }
+                                }
+                                count1 = count1 + y;
+                                fileBox.Focus();
+                                fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                                fileBox.SelectionBackColor = Color.Yellow;
+                            }
                         }
                     }
-                    lastNode.Line = token.Linenumber;
-                    lastNode.Position = token.Lineposition;
-                    treeStack.Peek().Nodes.Add(lastNode);
-                    treeStack.Push(lastNode);
-                    LLparser.Stack.Pop();
-                    treeStack.Pop();
-                }
-                syntaxTreeView.Nodes.Clear();
-                syntaxTreeView.Nodes.Add(root);
-                syntaxTreeView.ExpandAll();
+                    break;
+                case 0:
+                    break;
+                case 1:
+                    timer.Enabled = false;
+                    MessageBox.Show("Complete!");
+                    LLparser.ergodic(root);
+                    sytaxBox.Text = root.Code;
+                    break;
             }
+            root = LLparser.Root;
+            syntaxTreeView.Nodes.Clear();
+            syntaxTreeView.Nodes.Add(root);
+            syntaxTreeView.ExpandAll();
+
         }
 
         private void lexical_Click(object sender, EventArgs e)
         {
-            if (lexical.Checked)
-            {
                 lexicalView.Visible = true;
                 errorView.Visible = true;
                 syntaxTreeView.Visible = false;
                 sytaxBox.Visible = false;
-            }
+                LLerrorView.Visible = false;
         }
 
         private void syntax_Click(object sender, EventArgs e)
         {
-            if (syntax.Checked)
-            {
                 lexicalView.Visible = false;
                 errorView.Visible = false;
                 syntaxTreeView.Visible = true;
                 sytaxBox.Visible = false;
-            }
+                LLerrorView.Visible = true;
+        }
+
+        private void sytaxReset()
+        {
+            SymbolTable.reset();
+            LLparser.reset();
         }
 
         private void viewReset()
         {
-            lexicalView.Columns.Add("tokenType", 70);
-            lexicalView.Columns.Add("attributeValue", 70);
-            lexicalView.Columns.Add("lineNumber", 70);
-            lexicalView.Columns.Add("linePosition", 70);
+            lexicalView.Columns.Add("tokenType", 90);
+            lexicalView.Columns.Add("attributeValue", 90);
+            lexicalView.Columns.Add("lineNumber", 90);
+            lexicalView.Columns.Add("linePosition", 90);
             lexicalView.GridLines = true;
             lexicalView.View = View.Details;
             lexicalView.HeaderStyle = ColumnHeaderStyle.Clickable;
             lexicalView.FullRowSelect = true;
-            errorView.Columns.Add("tokenType", 70);
-            errorView.Columns.Add("message", 70);
-            errorView.Columns.Add("lineNumber", 70);
-            errorView.Columns.Add("linePosition", 70);
+            errorView.Columns.Add("tokenType", 90);
+            errorView.Columns.Add("message", 90);
+            errorView.Columns.Add("lineNumber", 90);
+            errorView.Columns.Add("linePosition", 90);
             errorView.GridLines = true;
             errorView.View = View.Details;
             errorView.HeaderStyle = ColumnHeaderStyle.Clickable;
             errorView.FullRowSelect = true;
+            LLerrorView.Columns.Add("lineNumber", 90);
+            LLerrorView.Columns.Add("linePosition", 90);
+            LLerrorView.Columns.Add("tokenType", 90);
+            LLerrorView.Columns.Add("expectTokenType", 90);
+            LLerrorView.GridLines = true;
+            LLerrorView.View = View.Details;
+            LLerrorView.HeaderStyle = ColumnHeaderStyle.Clickable;
+            LLerrorView.FullRowSelect = true;
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
@@ -371,11 +391,12 @@ namespace compiler
             {
                 LexicalAnalyzer.tokenClear();
                 LexicalAnalyzer.erListClear();
-                this.lexicalView.Clear();
-                this.errorView.Clear();
-                treeStack.Clear();
-                LLparser.stackReset();
-                this.viewReset();
+                sytaxBox.Clear();
+                lexicalView.Clear();
+                errorView.Clear();
+                LLerrorView.Clear();
+                sytaxReset();
+                viewReset();
             }
         }
 
@@ -384,44 +405,6 @@ namespace compiler
 
         }
 
-        private void output()
-        {
-            ergodic(root);
-            sytaxBox.Text = root.Code;
-        }
-
-        private void ergodic(SytaxNode node)
-        {
-            if(node.NextNode != null)
-            {
-                ((SytaxNode)node.NextNode).Before = node;
-            }
-            if (node.FirstNode != null)
-            {
-                node.NodeList = new List<SytaxNode>();
-                SytaxNode childNode = (SytaxNode)node.FirstNode;
-                while (childNode.NextNode != null)
-                {
-                    node.NodeList.Add(childNode);
-                    childNode = (SytaxNode)childNode.NextNode;
-                }
-                node.NodeList.Add(childNode);
-                LLparser.inherit(node, node.State);
-                foreach (SytaxNode ergodicNode in node.NodeList)
-                {
-                    ergodic(ergodicNode);
-                }
-                LLparser.synthetical(node, node.State);
-            }
-            //else
-            //{
-            //    if(node.Text == "identifier" && ((SytaxNode)node.Parent).State == 25)
-            //    {
-            //        node.Place = SymbolTable.addSymbol(node.Id, "double", node.Line, node.Position);
-            //    }
-            //}
-            return;
-        }
 
 
         private void threeAddr_Click(object sender, EventArgs e)
@@ -430,12 +413,13 @@ namespace compiler
             lexicalView.Visible = false;
             syntaxTreeView.Visible = false;
             sytaxBox.Visible = true;
+            LLerrorView.Visible = false;
         }
 
         private void autoButton_Click(object sender, EventArgs e)
         {
-            string file = textBox1.Text;
             button3_Click(sender, e);
+            string file = textBox1.Text;
             fileOpen(file);
             timer.Enabled = true;
             delay = Convert.ToInt32(delayBox.Text);
@@ -485,9 +469,14 @@ namespace compiler
                     b++;
                 }
             }
-            count = count + j-1;
+            count = count + j - 1;
             fileBox.Focus();
             fileBox.Select(count, 1);
+        }
+
+        private void LLerrorView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
