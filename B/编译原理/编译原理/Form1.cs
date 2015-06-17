@@ -143,6 +143,7 @@ namespace compiler
                 case -2:
                     fileBool = false;
                     timer.Enabled = false;
+                    MessageBox.Show("There's something wrong with sytax!");
                     break;
                 case 0:
                     break;
@@ -205,6 +206,12 @@ namespace compiler
             }
         }
 
+        private void sytaxReset()
+        {
+            SymbolTable.reset();
+            LLparser.reset();
+        }
+
         private void viewReset()
         {
             lexicalView.Columns.Add("tokenType", 70);
@@ -231,11 +238,11 @@ namespace compiler
             {
                 LexicalAnalyzer.tokenClear();
                 LexicalAnalyzer.erListClear();
-                this.lexicalView.Clear();
-                this.errorView.Clear();
-                LLparser.TreeStack.Clear();
-                LLparser.stackReset();
-                this.viewReset();
+                sytaxBox.Clear();
+                lexicalView.Clear();
+                errorView.Clear();
+                sytaxReset();
+                viewReset();
             }
         }
 

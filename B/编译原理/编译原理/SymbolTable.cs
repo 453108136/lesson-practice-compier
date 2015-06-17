@@ -17,6 +17,12 @@ namespace compiler
             get { return table; }
         }
 
+        public static void reset()
+        {
+            tempNum = 1;
+            table = new Dictionary<string,LinkedList<Symbol>>();
+        }
+
         public static Symbol addSymbol(string key, string type, int line, int postiton)
         {
             if (!SymbolTable.Table.ContainsKey(key))

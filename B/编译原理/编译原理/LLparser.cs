@@ -11,7 +11,14 @@ namespace compiler
     {
         static private LinkedList<string>[] Rules = new LinkedList<string>[30];
         static private int loopNum = 1;
-        static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
+        static private bool beforeIsWrong = false;
+        static private List<List<string>> errorList = new List<List<string>>();
+
+        public static List<List<string>> ErrorList
+        {
+            get { return LLparser.errorList; }
+            set { LLparser.errorList = value; }
+        }
         static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
 
         internal static Stack<SytaxNode> TreeStack
@@ -34,6 +41,8 @@ namespace compiler
             get { return LLparser.stack; }
             set { LLparser.stack = value; }
         }
+
+        static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
 
         public static Dictionary<string, Dictionary<string, int>> Table
         {
@@ -89,12 +98,23 @@ namespace compiler
             stackReset();
         }
 
-        static public void stackReset()
+        static private void stackReset()
         {
             Stack.Clear();
             Stack.Push("$");
             Stack.Push("program");
 
+        }
+
+        
+        static public void reset()
+        {
+            stackReset();
+            loopNum = 1;
+            treeStack.Clear();
+            errorList.Clear();
+            token = null;
+            root = null;
         }
 
         static public void pushStack (int rulesNo)
@@ -573,6 +593,7 @@ namespace compiler
             }
             return followSymbols;            
         }
+
         static public int sytaxAnalyse(object sender, EventArgs e)//语法分析 返回分析结果 -1：错误 -2：错误并分析结束 0：正确 1：正确的结尾
         {
             if (token != null && token.Tokentype != "error")
@@ -589,6 +610,7 @@ namespace compiler
                 {
                     if (token.Tokentype == "$")
                     {
+                        beforeIsWrong = false;
                         return 1;
                     }
                     else
@@ -614,6 +636,14 @@ namespace compiler
                     LLparser.Stack.Pop();
                     if (symbol != token.Tokentype)
                     {
+                        List<string> error = new List<string>();
+                        error.Add(token.Linenumber.ToString());
+                        error.Add(token.Lineposition.ToString());
+                        error.Add(token.Tokentype);
+                        error.Add(symbol);
+                        error.Add(token.Attributevalue.Length.ToString());
+                        error.Add(beforeIsWrong.ToString());
+                        errorList.Add(error);
                         symbol = LLparser.Stack.Peek();
                         while (symbol != "stmts" && token.Tokentype != "$")
                         {
@@ -630,17 +660,19 @@ namespace compiler
                         }
                         if (token.Tokentype == "$")
                         {
+                            beforeIsWrong = true;
                             return -2;
                         }
+                        beforeIsWrong = true;
                         return -1;
                     }
                 }
                 else
                 {
 
-                    while (!LLparser.isTerminator(symbol))
+                    while (!isTerminator(symbol))
                     {
-                        if (LLparser.Table[symbol].ContainsKey(token.Tokentype))
+                        if (Table[symbol].ContainsKey(token.Tokentype))
                         {
                             SytaxNode newNode = new SytaxNode(symbol);
                             if (treeStack.Count == 0)
@@ -683,6 +715,14 @@ namespace compiler
                         }
                         else
                         {
+                            List<string> error = new List<string>();
+                            error.Add(token.Linenumber.ToString());
+                            error.Add(token.Lineposition.ToString());
+                            error.Add(token.Tokentype);
+                            error.Add(Table[symbol].ToString());
+                            error.Add(token.Attributevalue.Length.ToString());
+                            error.Add(beforeIsWrong.ToString());
+                            errorList.Add(error);
                             symbol = LLparser.Stack.Peek();
                             while (symbol != "stmts" && token.Tokentype != "$")
                             {
@@ -698,13 +738,16 @@ namespace compiler
                                 }
                                 if (symbol == "$")
                                 {
+                                    beforeIsWrong = true;
                                     return -2;
                                 }
                             }
                             if (token.Tokentype == "$")
                             {
+                                beforeIsWrong = true;
                                 return -2;
                             }
+                            beforeIsWrong = true;
                             return -1;
                         }
                     }
@@ -728,6 +771,7 @@ namespace compiler
                     treeStack.Pop();
                 }
             }
+            beforeIsWrong = false;
             return 0;
         }
     }
