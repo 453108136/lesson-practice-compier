@@ -23,19 +23,19 @@ namespace compiler
             set { LexicalAnalyzer.str = value; }
         }
 
-        static public int position, line = 1, col = 0, code=0;
+        static public int position, line = 1, col = 0, code=0; //position用来记录字符位于整个文档的位置，line为行数，col为列数
 
 
         static public string[,] erList = new string [10000,4];
         public static int countColumError = 0;
 
-        public static void erListClear()
+        public static void erListClear() //清空erList
         {
             erList.Initialize();
             countColumError = 0;
         }
 
-        public static void tokenClear()
+        public static void tokenClear() //清空词法的编译，将位置置为0
         {
             position = 0;
             line = 1;
@@ -43,7 +43,7 @@ namespace compiler
             code = 0;
         }
 
-        private bool isExistKeywords(string a)
+        private bool isExistKeywords(string a) //判断是否为关键字
         {
             int i;
             bool result = false;
@@ -57,7 +57,7 @@ namespace compiler
             return result;
         }
 
-        private bool isExistDelimiters(string a)
+        private bool isExistDelimiters(string a) //判断是否为括号及分号
         {
             int j;
             bool result = false;
@@ -71,39 +71,38 @@ namespace compiler
             return result;
         }
 
-        private bool isLetter(char a)         
+        private bool isLetter(char a) //判断是否为字母
         { 
             if ((a >= 'a' && a <= 'z') || (a >= 'A' && a <= 'Z')) 
                 return true;             
             else return false;         
         }
 
-        private bool isDigit(char a)         
+        private bool isDigit(char a)  //判断是否为数字
         { 
             if (a >= '0' && a <= '9') 
                 return true;             
             else return false;         
         }
 
-        public Token nextToken()
+        public Token nextToken() //对文档的下一个token进行分析
         {
-            int state = 0;
+            int state = 0;  //开始时为0状态
             code = 0;
 
-            string attrva = "";
-            int coun = 0;
-            Error.reset();
+            string attrva = ""; //保存token的值，逐步加入
+            int coun = 0; //保存token的长度
            
-            for (int i =0;i < Str.Length;i++)
+            for (int i =0;i < Str.Length;i++) //进行状态跳转，读入文档的下一个字符，分析完成后返回一个token的类型值。
             {
-                if (position < Str.Length)
+                if (position < Str.Length) 
                 {
                     switch (state)
                     {
                         case 0:
                             ch = Str[position];
                             if (ch == '<')
-                            { state = 1; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
+                            { state = 1; position += 1; col += 1; coun += 1; attrva += ch.ToString(); } 
                             else if (ch == '=')
                             { state = 3; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else if (ch == '>')
@@ -116,7 +115,7 @@ namespace compiler
                             { state = 10; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else if (ch == '/')
                             { state = 16; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
-                            else if (ch == '+' || ch == '-' || ch == '*')
+                            else if (ch == '+' || ch == '-' || ch == '*') 
                             {
                                 attrva = ch.ToString();
                                 Token token = new Token(ch.ToString(), ch.ToString(), line, col - coun);

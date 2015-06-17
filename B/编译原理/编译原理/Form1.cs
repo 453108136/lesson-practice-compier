@@ -47,12 +47,14 @@ namespace compiler
         private void button2_Click(object sender, EventArgs e)
         {
             //lexicalView.Clear();
+            LexicalAnalyzer.Str = "";
             string file = textBox1.Text;
+            fileOpen(file);
             if (file != "")
             {
-                StreamReader fileOpen = new StreamReader(file);
-                fileBox.Text = fileOpen.ReadToEnd();
-                fileOpen.Close();
+                StreamReader fileOpen1 = new StreamReader(file);
+                fileBox.Text = fileOpen1.ReadToEnd();
+                fileOpen1.Close();
             }
             else
             {
@@ -71,15 +73,15 @@ namespace compiler
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string file = textBox1.Text;
-            fileOpen(file);
+            //string file = textBox1.Text;
+            //fileOpen(file);
             timer.Enabled = false;
             sytaxAnalyse(sender, e);
         }
 
         private void fileOpen(string fileName)
         {
-            LexicalAnalyzer.input = new StreamReader(fileName, fileBool);
+            LexicalAnalyzer.input = new StreamReader(fileName);
             oldStr = fileBox.Text;
             int filei = 0;            
             int i = 0;
@@ -105,7 +107,7 @@ namespace compiler
                 lexicalView.Visible = true;
                 errorView.Visible = true;
             }
-            //button3_Click(sender, e);
+            button3_Click(sender, e);
             LexicalAnalyzer.errorList.Clear();            
             LexicalAnalyzer lex = new LexicalAnalyzer();
             Token token = lex.nextToken();
@@ -433,6 +435,7 @@ namespace compiler
         private void autoButton_Click(object sender, EventArgs e)
         {
             string file = textBox1.Text;
+            button3_Click(sender, e);
             fileOpen(file);
             timer.Enabled = true;
             delay = Convert.ToInt32(delayBox.Text);
