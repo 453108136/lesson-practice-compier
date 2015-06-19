@@ -16,10 +16,14 @@ namespace compiler
         //static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
         static private SytaxNode root;
         private Timer timer = new Timer();
-        private bool fileBool = true;
+        //private bool fileBool = true;
         public char[,] filetxt = new char[50, 100];
         private int delay = 1000;
         private string oldStr;
+        private int oldBegin = 0;
+        private int oldEnd = 0;
+        private Color oldColor;
+
         public Form1()
         {
             InitializeComponent();
@@ -61,6 +65,7 @@ namespace compiler
         {
             //lexicalView.Clear();
             LexicalAnalyzer.Str = "";
+            filetxt = new char[50, 100];
             string file = textBox1.Text;
             this.fileOpen(file);
             if (file != "")
@@ -168,7 +173,7 @@ namespace compiler
                         b++;
                     }
                 }
-                count = count + j - 1;
+                count = count + j-1;
                 fileBox.Focus();
                 fileBox.Select(count, 1);
                 fileBox.SelectionColor = Color.Red;
@@ -179,11 +184,6 @@ namespace compiler
                 case -1:
                     if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
                     {
-                        ListViewItem li = new ListViewItem();
-                        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
-                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
-                        this.LLerrorView.Items.Add(li);
                         int bef = 2;
                         if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
                         {
@@ -203,6 +203,12 @@ namespace compiler
                             fileBox.Focus();
                             fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
                             fileBox.SelectionBackColor = Color.Yellow;
+                            ListViewItem li = new ListViewItem();
+                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                            this.LLerrorView.Items.Add(li);
                         }
                         else
                         {
@@ -242,20 +248,21 @@ namespace compiler
                                 fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
                                 fileBox.SelectionBackColor = Color.Yellow;
                             }
+                            ListViewItem li = new ListViewItem();
+                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                            this.LLerrorView.Items.Add(li);
                         }
                     }
                     break;
                 case -2:
-                    fileBool = false;
+                    //fileBool = false;
                     timer.Enabled = false;
                     MessageBox.Show("There's something wrong with sytax!");
                     if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
                     {
-                        ListViewItem li = new ListViewItem();
-                        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
-                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
-                        this.LLerrorView.Items.Add(li);
                         int bef = 2;
                         if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
                         {
@@ -275,6 +282,12 @@ namespace compiler
                             fileBox.Focus();
                             fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
                             fileBox.SelectionBackColor = Color.Yellow;
+                            ListViewItem li = new ListViewItem();
+                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                            this.LLerrorView.Items.Add(li);
                         }
                         else
                         {
@@ -314,6 +327,12 @@ namespace compiler
                                 fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
                                 fileBox.SelectionBackColor = Color.Yellow;
                             }
+                            ListViewItem li = new ListViewItem();
+                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                            this.LLerrorView.Items.Add(li);
                         }
                     }
                     break;
@@ -324,6 +343,8 @@ namespace compiler
                     MessageBox.Show("Complete!");
                     LLparser.ergodic(root);
                     sytaxBox.Text = root.Code;
+                    SymbolTable.reset();
+                    LLparser.loopReset();
                     break;
             }
             root = LLparser.Root;
@@ -457,6 +478,12 @@ namespace compiler
 
         private void errorView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (oldColor != null)
+            {
+                fileBox.Focus();
+                fileBox.Select(oldBegin, oldEnd);
+                fileBox.SelectionBackColor = oldColor;
+            }
             int x = Convert.ToInt32(errorView.FocusedItem.SubItems[2].Text);
             int j = Convert.ToInt32(errorView.FocusedItem.SubItems[3].Text);
             int count = 0;
@@ -470,13 +497,41 @@ namespace compiler
                 }
             }
             count = count + j - 1;
+            oldBegin = count;
+            oldEnd = 1;
             fileBox.Focus();
             fileBox.Select(count, 1);
+            oldColor = fileBox.SelectionBackColor;
+            fileBox.SelectionBackColor = Color.BlueViolet;
         }
 
         private void LLerrorView_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (oldColor != null)
+            {
+                fileBox.Focus();
+                fileBox.Select(oldBegin, oldEnd);
+                fileBox.SelectionBackColor = oldColor;
+            }
+            int x = Convert.ToInt32(LLerrorView.FocusedItem.SubItems[0].Text);
+            int j = Convert.ToInt32(LLerrorView.FocusedItem.SubItems[1].Text);
+            int count = 0;
+            for (int a = 0; a < x - 1; a++)
+            {
+                int b = 0;
+                while (filetxt[a, b] != '\r')
+                {
+                    count++;
+                    b++;
+                }
+            }
+            count = count + j;
+            oldBegin = count;
+            oldEnd = 1;
+            fileBox.Focus();
+            fileBox.Select(count, 1);
+            oldColor = fileBox.SelectionBackColor;
+            fileBox.SelectionBackColor = Color.BlueViolet;
         }
     }
 }

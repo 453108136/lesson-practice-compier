@@ -106,6 +106,10 @@ namespace compiler
 
         }
 
+        static public void loopReset()
+        {
+            loopNum = 1;
+        }
         
         static public void reset()
         {

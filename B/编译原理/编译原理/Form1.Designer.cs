@@ -31,7 +31,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.fileBox = new System.Windows.Forms.RichTextBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.lexicalView = new System.Windows.Forms.ListView();
@@ -78,19 +77,9 @@
             this.fileBox.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             this.fileBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.fileBox_KeyUp);
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(43, 692);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "打开";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(201, 692);
+            this.button3.Location = new System.Drawing.Point(42, 692);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 4;
@@ -100,7 +89,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(365, 692);
+            this.button4.Location = new System.Drawing.Point(241, 692);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 5;
@@ -173,7 +162,7 @@
             // 
             // autoButton
             // 
-            this.autoButton.Location = new System.Drawing.Point(673, 692);
+            this.autoButton.Location = new System.Drawing.Point(558, 692);
             this.autoButton.Name = "autoButton";
             this.autoButton.Size = new System.Drawing.Size(75, 23);
             this.autoButton.TabIndex = 16;
@@ -203,7 +192,7 @@
             // delayLab
             // 
             this.delayLab.AutoSize = true;
-            this.delayLab.Location = new System.Drawing.Point(483, 697);
+            this.delayLab.Location = new System.Drawing.Point(388, 697);
             this.delayLab.Name = "delayLab";
             this.delayLab.Size = new System.Drawing.Size(77, 12);
             this.delayLab.TabIndex = 19;
@@ -211,7 +200,7 @@
             // 
             // delayBox
             // 
-            this.delayBox.Location = new System.Drawing.Point(580, 694);
+            this.delayBox.Location = new System.Drawing.Point(456, 694);
             this.delayBox.Name = "delayBox";
             this.delayBox.Size = new System.Drawing.Size(58, 21);
             this.delayBox.TabIndex = 20;
@@ -258,7 +247,6 @@
             this.Controls.Add(this.lexicalView);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.fileBox);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
@@ -275,7 +263,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.RichTextBox fileBox;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ListView lexicalView;
