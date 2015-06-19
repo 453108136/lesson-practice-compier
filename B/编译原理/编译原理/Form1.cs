@@ -173,7 +173,7 @@ namespace compiler
                         b++;
                     }
                 }
-                count = count + j-1;
+                count = count + j;
                 fileBox.Focus();
                 fileBox.Select(count, 1);
                 fileBox.SelectionColor = Color.Red;
@@ -496,7 +496,7 @@ namespace compiler
                     b++;
                 }
             }
-            count = count + j - 1;
+            count = count + j;
             oldBegin = count;
             oldEnd = 1;
             fileBox.Focus();

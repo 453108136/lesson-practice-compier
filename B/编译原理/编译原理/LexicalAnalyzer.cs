@@ -162,14 +162,13 @@ namespace compiler
                             }
                             else
                             {
-                                Error a = new Error(line, col - coun, "illegal char input");
+                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 //errorOutput.Write(a.ErrorNo + " line: " + line + "   position: " + col + " :'" + ch + "'  " + a.Message + "\r");
-                                errorList.Add(a);
+                                errorList.Add(b);
                                 state = -1;
                                 coun = 0;
                                 position += 1;
                                 col += 1;
-                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 return b;
                             }
                             break;
@@ -255,14 +254,13 @@ namespace compiler
                             { state = 8; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Error a = new Error(line, col - coun, "illegal char input");
+                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 //errorOutput.Write(a.ErrorNo + " line: " + line + "   position: " + col + " :'" + ch + "'  " + a.Message + "\r");
-                                errorList.Add(a);
+                                errorList.Add(b);
                                 state = -1;
                                 coun = 0;
                                 attrva = "";
-                                i--;
-                                Token b = new Token("error", a.Message, line, col - coun);
+                                i--;                                
                                 return b;
                             }
                             break;
@@ -341,14 +339,13 @@ namespace compiler
                             { state = 12; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Error a = new Error(line, col - coun, "illegal char input");
+                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 //errorOutput.Write(a.ErrorNo + " line: " + line + "   position: " + col + " :'" + ch + "'  " + a.Message + "\r");
-                                errorList.Add(a);
+                                errorList.Add(b);
                                 state = -1;
                                 coun = 0;
                                 attrva = "";
                                 i--;
-                                Token b = new Token("error", a.Message, line, col - coun);
                                 return b;
                             }
                             break;
@@ -379,14 +376,13 @@ namespace compiler
                             { state = 14; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Error a = new Error(line, col - coun, "illegal char input");
+                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 //errorOutput.Write(a.ErrorNo + " line: " + line + "   position: " + col + " :'" + ch + "'  " + a.Message + "\r");
-                                errorList.Add(a);
+                                errorList.Add(b);
                                 state = -1;
                                 coun = 0;
                                 attrva = "";
                                 i--;
-                                Token b = new Token("error", a.Message, line, col - coun);
                                 return b;
                             }
                             break;
@@ -397,14 +393,13 @@ namespace compiler
                             { state = 15; position += 1; col += 1; coun += 1; attrva += ch.ToString(); }
                             else
                             {
-                                Error a = new Error(line, col - coun, "illegal char input");
+                                Token b = new Token("error", "illegal char input", line, col - coun);
                                 //errorOutput.Write(a.ErrorNo + " line: " + line + "   position: " + col + " :'" + ch + "'  " + a.Message + "\r");
-                                errorList.Add(a);
+                                errorList.Add(b);
                                 state = -1;
                                 coun = 0;
                                 attrva = "";
                                 i--;
-                                Token b = new Token("error", a.Message, line, col - coun);
                                 return b;
                             }
                             break;
