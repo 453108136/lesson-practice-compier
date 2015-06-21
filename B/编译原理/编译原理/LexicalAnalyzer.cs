@@ -16,6 +16,13 @@ namespace compiler
         private char ch;
         static public StreamReader input;
         static private string str;
+        static private bool hasNextToken = true;
+
+        public static bool HasNextToken
+        {
+            get { return LexicalAnalyzer.hasNextToken; }
+            set { LexicalAnalyzer.hasNextToken = value; }
+        }
 
         public static string Str
         {
@@ -156,9 +163,19 @@ namespace compiler
                             }
                             else if (ch == '$')
                             {
-                                Token a = new Token('$'.ToString(),'$'.ToString(),line,col);
-                                //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
-                                return a;
+                                if ((position + 1) >= Str.Length)
+                                {
+                                    hasNextToken = false;
+                                    Token a = new Token('$'.ToString(), '$'.ToString(), line, col);
+                                    //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
+                                    return a;
+                                }
+                                else
+                                {
+                                    Token a = new Token("error", '$'.ToString(), line, col);
+                                    //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
+                                    return a;
+                                }
                             }
                             else
                             {
