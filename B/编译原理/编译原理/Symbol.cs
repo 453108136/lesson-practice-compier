@@ -8,35 +8,35 @@ namespace compiler
 {
     class Symbol
     {
-        private string key;
+        private string key;     //符号的名称
 
         public string Key
         {
             get { return key; }
             set { key = value; }
         }
-        private string value;
+        private string value;       //符号的值
 
         public string Value
         {
             get { return this.value; }
             set { this.value = value; }
         }
-        private string type;
+        private string type;        //符号的类型
 
         public string Type
         {
             get { return type; }
             set { type = value; }
         }
-        private int line;
+        private int line;       //符号所在行
 
         public int Line
         {
             get { return line; }
             set { line = value; }
         }
-        private int positon;
+        private int positon;    //符号所在列
 
         public int Positon
         {
@@ -52,7 +52,7 @@ namespace compiler
             Positon = positon;
         }
 
-        public Symbol(string key, string type)
+        public Symbol(string key, string type)      //用于临时变量的创建
         {
             Key = key;
             Type = type;

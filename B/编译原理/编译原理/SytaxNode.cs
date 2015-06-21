@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace compiler
 {
-    class SytaxNode : TreeNode
+    class SytaxNode : TreeNode      //记录各种信息的树节点
     {
         public SytaxNode(string str):base(str)
         {
@@ -17,7 +17,7 @@ namespace compiler
 
         }
 
-        List<SytaxNode> nodeList;
+        List<SytaxNode> nodeList;   //子节点的列表
 
         internal List<SytaxNode> NodeList
         {
@@ -25,7 +25,7 @@ namespace compiler
             set { nodeList = value; }
         }
 
-        string id;
+        string id;      //符号
 
         public string Id
         {
@@ -34,13 +34,13 @@ namespace compiler
         }
         int state;
 
-        public int State
+        public int State    //状态，根据哪条文法展开的
         {
             get { return state; }
             set { state = value; }
         }
 
-        SytaxNode before;
+        SytaxNode before;   //前一个节点
 
         internal SytaxNode Before
         {
@@ -48,28 +48,28 @@ namespace compiler
             set { before = value; }
         }
 
-        string value;
+        string value;   //值
 
         public string Value
         {
             get { return this.value; }
             set { this.value = value; }
         }
-        Symbol place;
+        Symbol place;   //符号表中的地址
 
         internal Symbol Place
         {
             get { return place; }
             set { place = value; }
         }
-        string type;
+        string type;  //类型
 
         public string Type
         {
             get { return type; }
             set { type = value; }
         }
-        string code;
+        string code;  //生成的三地址代码
 
         public string Code
         {
@@ -77,36 +77,36 @@ namespace compiler
             set { code = value; }
         }
 
-        int line;
+        int line;     //所在行
 
         public int Line
         {
             get { return line; }
             set { line = value; }
         }
-        int position;
+        int position;     //所在列
 
         public int Position
         {
             get { return position; }
             set { position = value; }
         }
-        string elseAddr;
+        string elseAddr;      //else跳转标签
 
         public string ElseAddr
         {
             get { return elseAddr; }
             set { elseAddr = value; }
         }
-        string afterAddr;
+        string afterAddr;     //then结束跳转标签
 
-        public string AfterAddr
+        public string AfterAddr 
         {
             get { return afterAddr; }
             set { afterAddr = value; }
         }
 
-        string beginAddr;
+        string beginAddr;      //while开始跳转标签
 
         public string BeginAddr
         {

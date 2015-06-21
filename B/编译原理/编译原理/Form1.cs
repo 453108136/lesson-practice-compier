@@ -261,80 +261,80 @@ namespace compiler
                     //fileBool = false;
                     timer.Enabled = false;
                     MessageBox.Show("There's something wrong with sytax!");
-                    if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
-                    {
-                        int bef = 2;
-                        if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
-                        {
-                            int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
-                            int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                            int count = 0;
-                            for (int a = 0; a < x - 1; a++)
-                            {
-                                int b = 0;
-                                while (filetxt[a, b] != '\r')
-                                {
-                                    count++;
-                                    b++;
-                                }
-                            }
-                            count = count + j;
-                            fileBox.Focus();
-                            fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
-                            fileBox.SelectionBackColor = Color.Yellow;
-                            ListViewItem li = new ListViewItem();
-                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
-                            this.LLerrorView.Items.Add(li);
-                        }
-                        else
-                        {
-                            if (LLparser.ErrorList.Count > 1)
-                            {
-                                while (LLparser.ErrorList[LLparser.ErrorList.Count - bef][5] == "True")
-                                {
-                                    bef++;
-                                }
-                                int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][0]);
-                                int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][1]);
-                                int count = 0;
-                                for (int a = 0; a < x - 1; a++)
-                                {
-                                    int b = 0;
-                                    while (filetxt[a, b] != '\r')
-                                    {
-                                        count++;
-                                        b++;
-                                    }
-                                }
-                                count = count + j;
-                                int z = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
-                                int y = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                                int count1 = 0;
-                                for (int a = 0; a < z - 1; a++)
-                                {
-                                    int b = 0;
-                                    while (filetxt[a, b] != '\r')
-                                    {
-                                        count++;
-                                        b++;
-                                    }
-                                }
-                                count1 = count1 + y;
-                                fileBox.Focus();
-                                fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
-                                fileBox.SelectionBackColor = Color.Yellow;
-                            }
-                            ListViewItem li = new ListViewItem();
-                            li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
-                            li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
-                            this.LLerrorView.Items.Add(li);
-                        }
-                    }
+                    //if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
+                    //{
+                    //    int bef = 2;
+                    //    if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][5] == "False")
+                    //    {
+                    //        int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                    //        int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                    //        int count = 0;
+                    //        for (int a = 0; a < x - 1; a++)
+                    //        {
+                    //            int b = 0;
+                    //            while (filetxt[a, b] != '\r')
+                    //            {
+                    //                count++;
+                    //                b++;
+                    //            }
+                    //        }
+                    //        count = count + j;
+                    //        fileBox.Focus();
+                    //        fileBox.Select(count, Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                    //        fileBox.SelectionBackColor = Color.Yellow;
+                    //        ListViewItem li = new ListViewItem();
+                    //        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                    //        this.LLerrorView.Items.Add(li);
+                    //    }
+                    //    else
+                    //    {
+                    //        if (LLparser.ErrorList.Count > 1)
+                    //        {
+                    //            while (LLparser.ErrorList[LLparser.ErrorList.Count - bef][5] == "True")
+                    //            {
+                    //                bef++;
+                    //            }
+                    //            int x = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][0]);
+                    //            int j = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - bef][1]);
+                    //            int count = 0;
+                    //            for (int a = 0; a < x - 1; a++)
+                    //            {
+                    //                int b = 0;
+                    //                while (filetxt[a, b] != '\r')
+                    //                {
+                    //                    count++;
+                    //                    b++;
+                    //                }
+                    //            }
+                    //            count = count + j;
+                    //            int z = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][0]);
+                    //            int y = Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                    //            int count1 = 0;
+                    //            for (int a = 0; a < z - 1; a++)
+                    //            {
+                    //                int b = 0;
+                    //                while (filetxt[a, b] != '\r')
+                    //                {
+                    //                    count++;
+                    //                    b++;
+                    //                }
+                    //            }
+                    //            count1 = count1 + y;
+                    //            fileBox.Focus();
+                    //            fileBox.Select(count, count1 - count + Convert.ToInt32(LLparser.ErrorList[LLparser.ErrorList.Count - 1][4]));
+                    //            fileBox.SelectionBackColor = Color.Yellow;
+                    //        }
+                    //        ListViewItem li = new ListViewItem();
+                    //        li.Text = LLparser.ErrorList[LLparser.ErrorList.Count - 1][0];
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][1]);
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][2]);
+                    //        li.SubItems.Add(LLparser.ErrorList[LLparser.ErrorList.Count - 1][3]);
+                    //        this.LLerrorView.Items.Add(li);
+                    //    }
+                    //}
                     break;
                 case 0:
                     break;
@@ -406,9 +406,10 @@ namespace compiler
             LLerrorView.FullRowSelect = true;
         }
 
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            if(oldStr != fileBox.Text)
+            if (oldStr != fileBox.Text)
             {
                 LexicalAnalyzer.tokenClear();
                 LexicalAnalyzer.erListClear();
@@ -418,6 +419,11 @@ namespace compiler
                 LLerrorView.Clear();
                 sytaxReset();
                 viewReset();
+                fileBox.Focus();
+                fileBox.SelectAll();
+                fileBox.SelectionBackColor = Color.White;
+                fileBox.SelectionColor = Color.Black;
+                fileBox.Select(0, 0);
             }
         }
 
