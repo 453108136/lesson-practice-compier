@@ -33,6 +33,13 @@ namespace compiler
             get { return LLparser.token; }
             set { LLparser.token = value; }
         }
+        static private bool hasNextToken = false;
+
+        public static bool HasNextToken
+        {
+            get { return LLparser.hasNextToken; }
+            set { LLparser.hasNextToken = value; }
+        }
 
         static private Stack<string> stack = new Stack<string>();
 
@@ -612,7 +619,7 @@ namespace compiler
                 }
                 if (symbol == "$")
                 {
-                    if (token.Tokentype == "$")
+                    if (hasNextToken == false)
                     {
                         beforeIsWrong = false;
                         return 1;
@@ -623,6 +630,19 @@ namespace compiler
                         beforeIsWrong = true;
                         return -2;
                     }
+                }
+                if(symbol == "stmts" && hasNextToken == true && token.Attributevalue == "}")
+                {
+                    List<string> error = new List<string>();
+                    error.Add(token.Linenumber.ToString());
+                    error.Add(token.Lineposition.ToString());
+                    error.Add(token.Tokentype);
+                    error.Add("Program doesn't mean to end");
+                    error.Add(token.Attributevalue.Length.ToString());
+                    error.Add(beforeIsWrong.ToString());
+                    errorList.Add(error);
+                    beforeIsWrong = true;
+                    return -1;
                 }
                 if (LLparser.isTerminator(symbol))
                 {
@@ -651,7 +671,7 @@ namespace compiler
                         error.Add(beforeIsWrong.ToString());
                         errorList.Add(error);
                         symbol = LLparser.Stack.Peek();
-                        while (symbol != "stmts" && token.Tokentype != "$")
+                        while (symbol != "stmts" && hasNextToken == true)
                         {
                             newNode = new SytaxNode(symbol);
                             treeStack.Peek().Nodes.Add(newNode);
@@ -664,7 +684,7 @@ namespace compiler
                                 symbol = LLparser.Stack.Peek();
                             }
                         }
-                        if (token.Tokentype == "$")
+                        if (hasNextToken == false)
                         {
                             beforeIsWrong = true;
                             return -2;
@@ -735,7 +755,7 @@ namespace compiler
                                 beforeIsWrong = true;
                                 return -1;
                             }
-                            while (symbol != "stmts" && token.Tokentype != "$")
+                            while (symbol != "stmts" && hasNextToken == true)
                             {
                                 SytaxNode newNode = new SytaxNode(symbol);
                                 treeStack.Peek().Nodes.Add(newNode);
@@ -753,7 +773,7 @@ namespace compiler
                                     return -2;
                                 }
                             }
-                            if (token.Tokentype == "$")
+                            if (hasNextToken == false)
                             {
                                 beforeIsWrong = true;
                                 return -2;

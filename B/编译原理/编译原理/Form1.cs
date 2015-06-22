@@ -142,12 +142,15 @@ namespace compiler
                 //StreamReader fil = new StreamReader(fileOut);
                 //richTextBox2.Text = fil.ReadToEnd();
                 //fil.Close();
-                ListViewItem li = new ListViewItem();
-                li.Text = token.Tokentype;
-                li.SubItems.Add(token.Attributevalue);
-                li.SubItems.Add(token.Linenumber.ToString());
-                li.SubItems.Add(token.Lineposition.ToString());
-                this.lexicalView.Items.Add(li);
+                if (LexicalAnalyzer.HasNextToken == true)
+                {
+                    ListViewItem li = new ListViewItem();
+                    li.Text = token.Tokentype;
+                    li.SubItems.Add(token.Attributevalue);
+                    li.SubItems.Add(token.Linenumber.ToString());
+                    li.SubItems.Add(token.Lineposition.ToString());
+                    this.lexicalView.Items.Add(li);
+                }
             }
             else
             {
@@ -179,6 +182,7 @@ namespace compiler
                 fileBox.SelectionColor = Color.Red;
             }
             LLparser.Token = token;
+            LLparser.HasNextToken = LexicalAnalyzer.HasNextToken;
             switch(LLparser.sytaxAnalyse(sender, e))
             {
                 case -1:
