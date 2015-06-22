@@ -175,6 +175,10 @@ namespace compiler
                                     Token a = new Token("error", '$'.ToString(), line, col);
                                     //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
                                     return a;
+                                    state = -1;
+                                    coun = 0;
+                                    position += 1;
+                                    col += 1;
                                 }
                             }
                             else
