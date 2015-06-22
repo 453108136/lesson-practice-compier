@@ -421,11 +421,26 @@ namespace compiler
                 LLerrorView.Clear();
                 sytaxReset();
                 viewReset();
+                int index = fileBox.GetFirstCharIndexOfCurrentLine();
+                int x = fileBox.GetLineFromCharIndex(index)+1;
+                int j = fileBox.SelectionStart - index;
+                int count = 0;
+                for (int a = 0; a < x - 1; a++)
+                {
+                    int b = 0;
+                    while (filetxt[a, b] != '\r')
+                    {
+                        count++;
+                        b++;
+                    }
+                }
+                count = count + j;
                 fileBox.Focus();
                 fileBox.SelectAll();
                 fileBox.SelectionBackColor = Color.White;
                 fileBox.SelectionColor = Color.Black;
-                fileBox.Select(0, 0);
+                //button3_Click(sender ,e);
+                fileBox.Select(count,0);
             }
         }
 
