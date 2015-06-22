@@ -85,6 +85,8 @@ namespace compiler
         {
             LexicalAnalyzer.Str = "";
             string file = textBox1.Text;
+            if (file == "")
+                return;
             this.fileOpen(file);
             StreamWriter fileSave = new StreamWriter(file);
             fileSave.Write(fileBox.Text);
@@ -95,12 +97,16 @@ namespace compiler
         {
             string file = textBox1.Text;
             fileOpen(file);
+            if (file == "")
+                return;
             timer.Enabled = false;
             sytaxAnalyse(sender, e);
         }
 
         private void fileOpen(string fileName)
         {
+            if (fileName == "")
+                return;
             LexicalAnalyzer.input = new StreamReader(fileName);
             oldStr = fileBox.Text;
             int filei = 0;            
@@ -114,9 +120,9 @@ namespace compiler
                     filetxt[filei, i] = strrr.ToCharArray()[i];
                 }
                 filetxt[filei, i + 1] = '\r';
-                filei++;
+                filei++;            
             }
-            LexicalAnalyzer.Str += '$';
+            LexicalAnalyzer.Str = LexicalAnalyzer.Str.Trim();
             LexicalAnalyzer.input.Close();
         }
 
@@ -134,6 +140,7 @@ namespace compiler
             //LexicalAnalyzer.input = new StreamReader(file, fileBool);
             if (LexicalAnalyzer.code == -1)
             {
+                timer.Enabled = false;
                 MessageBox.Show("There are no more Tokens!");
                 return;
             }
@@ -183,7 +190,7 @@ namespace compiler
             }
             LLparser.Token = token;
             LLparser.HasNextToken = LexicalAnalyzer.HasNextToken;
-            switch(LLparser.sytaxAnalyse(sender, e))
+            switch (LLparser.sytaxAnalyse(sender, e))
             {
                 case -1:
                     if (LLparser.ErrorList[LLparser.ErrorList.Count - 1][2] != "$")
@@ -351,11 +358,19 @@ namespace compiler
                     LLparser.loopReset();
                     break;
             }
+            
             root = LLparser.Root;
             syntaxTreeView.Nodes.Clear();
-            syntaxTreeView.Nodes.Add(root);
+            if (root != null)
+            {
+                syntaxTreeView.Nodes.Add(root);
+            }
             syntaxTreeView.ExpandAll();
 
+            if (LexicalAnalyzer.HasNextToken == false)
+            {
+                timer.Enabled = false;
+            }
         }
 
         private void lexical_Click(object sender, EventArgs e)
@@ -443,6 +458,7 @@ namespace compiler
                 fileBox.SelectionColor = Color.Black;
                 //button3_Click(sender ,e);
                 fileBox.Select(count,0);
+                LexicalAnalyzer.HasNextToken = true;
             }
         }
 
@@ -465,8 +481,6 @@ namespace compiler
         private void autoButton_Click(object sender, EventArgs e)
         {
             button3_Click(sender, e);
-            string file = textBox1.Text;
-            fileOpen(file);
             timer.Enabled = true;
             delay = Convert.ToInt32(delayBox.Text);
             timer.Interval = delay;
@@ -527,7 +541,7 @@ namespace compiler
             fileBox.Focus();
             fileBox.Select(count, 1);
             oldColor = fileBox.SelectionBackColor;
-            fileBox.SelectionBackColor = Color.BlueViolet;
+            fileBox.SelectionBackColor = Color.Blue;
         }
 
         private void LLerrorView_SelectedIndexChanged(object sender, EventArgs e)
@@ -556,7 +570,7 @@ namespace compiler
             fileBox.Focus();
             fileBox.Select(count, 1);
             oldColor = fileBox.SelectionBackColor;
-            fileBox.SelectionBackColor = Color.BlueViolet;
+            fileBox.SelectionBackColor = Color.Blue;
         }
     }
 }

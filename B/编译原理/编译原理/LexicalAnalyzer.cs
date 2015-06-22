@@ -18,6 +18,7 @@ namespace compiler
         static private string str;
         static private bool hasNextToken = true;
 
+
         public static bool HasNextToken
         {
             get { return LexicalAnalyzer.hasNextToken; }
@@ -99,7 +100,12 @@ namespace compiler
 
             string attrva = ""; //保存token的值，逐步加入
             int coun = 0; //保存token的长度
-           
+
+            if ((position + 1) >= Str.Length)
+            {
+                hasNextToken = false;
+            }
+
             for (int i =0;i < Str.Length;i++) //进行状态跳转，读入文档的下一个字符，分析完成后返回一个token的类型值。
             {
                 if (position < Str.Length) 
@@ -160,26 +166,6 @@ namespace compiler
                                 col = 0;
                                 state = 0;
                                 coun = 0;
-                            }
-                            else if (ch == '$')
-                            {
-                                if ((position + 1) >= Str.Length)
-                                {
-                                    hasNextToken = false;
-                                    Token a = new Token('$'.ToString(), '$'.ToString(), line, col);
-                                    //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
-                                    return a;
-                                }
-                                else
-                                {
-                                    Token a = new Token("error", '$'.ToString(), line, col);
-                                    //output.Write(a.Tokentype + " '" + a.Attributevalue + "' linenumber:" + a.Linenumber + " lineposition:" + a.Lineposition + '\r');
-                                    return a;
-                                    state = -1;
-                                    coun = 0;
-                                    position += 1;
-                                    col += 1;
-                                }
                             }
                             else
                             {

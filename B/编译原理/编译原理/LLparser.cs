@@ -631,19 +631,19 @@ namespace compiler
                         return -2;
                     }
                 }
-                if(symbol == "stmts" && hasNextToken == true && token.Attributevalue == "}")
-                {
-                    List<string> error = new List<string>();
-                    error.Add(token.Linenumber.ToString());
-                    error.Add(token.Lineposition.ToString());
-                    error.Add(token.Tokentype);
-                    error.Add("Program doesn't mean to end");
-                    error.Add(token.Attributevalue.Length.ToString());
-                    error.Add(beforeIsWrong.ToString());
-                    errorList.Add(error);
-                    beforeIsWrong = true;
-                    return -1;
-                }
+                //if(stack.Count != 3 && hasNextToken == true && token.Attributevalue == "}")
+                //{
+                //    List<string> error = new List<string>();
+                //    error.Add(token.Linenumber.ToString());
+                //    error.Add(token.Lineposition.ToString());
+                //    error.Add(token.Tokentype);
+                //    error.Add("Program doesn't mean to end");
+                //    error.Add(token.Attributevalue.Length.ToString());
+                //    error.Add(beforeIsWrong.ToString());
+                //    errorList.Add(error);
+                //    beforeIsWrong = true;
+                //    return -1;
+                //}
                 if (LLparser.isTerminator(symbol))
                 {
                     SytaxNode newNode = new SytaxNode(symbol);
