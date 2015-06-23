@@ -9,31 +9,31 @@ namespace compiler
 {
     class LLparser
     {
-        static private LinkedList<string>[] Rules = new LinkedList<string>[30];
-        static private int loopNum = 1;
-        static private bool beforeIsWrong = false;
-        static private List<List<string>> errorList = new List<List<string>>();
+        static private LinkedList<string>[] Rules = new LinkedList<string>[30];     //存放文法规则除要求外，外加number推倒出int和real
+        static private int loopNum = 1;     //用于生成跳转标签的number
+        static private bool beforeIsWrong = false;  //标志前一个文法是否有错
+        static private List<List<string>> errorList = new List<List<string>>(); //错误返回的列表
 
         public static List<List<string>> ErrorList
         {
             get { return LLparser.errorList; }
             set { LLparser.errorList = value; }
         }
-        static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>();
+        static private Stack<SytaxNode> treeStack = new Stack<SytaxNode>(); //用于生成语法树
 
         internal static Stack<SytaxNode> TreeStack
         {
             get { return LLparser.treeStack; }
             set { LLparser.treeStack = value; }
         }
-        static private Token token;
+        static private Token token;     //调用词法返回的token
 
         internal static Token Token
         {
             get { return LLparser.token; }
             set { LLparser.token = value; }
         }
-        static private bool hasNextToken = false;
+        static private bool hasNextToken = false;   //词法是否分析结束
 
         public static bool HasNextToken
         {
@@ -41,7 +41,7 @@ namespace compiler
             set { LLparser.hasNextToken = value; }
         }
 
-        static private Stack<string> stack = new Stack<string>();
+        static private Stack<string> stack = new Stack<string>();   //用于分析语法的栈
 
         public static Stack<string> Stack
         {
@@ -49,14 +49,14 @@ namespace compiler
             set { LLparser.stack = value; }
         }
 
-        static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();
+        static private Dictionary<string, Dictionary<string, int>> table = new Dictionary<string,Dictionary<string,int>>();     //用于存放语义规则
 
         public static Dictionary<string, Dictionary<string, int>> Table
         {
             get { return LLparser.table; }
         }
 
-        static private SytaxNode root;
+        static private SytaxNode root;      //语法树的根节点
 
         internal static SytaxNode Root
         {
@@ -64,13 +64,13 @@ namespace compiler
             set { LLparser.root = value; }
         }
 
-        public void make()
+        public void make()  //初始化，生成预测分析表
         {
             init();
             createTable();
         }
 
-        private static void init()
+        private static void init()  //初始化语法规则和语法栈
         {
             Rules[0]  = new LinkedList<string>(); Rules[0] .AddLast("program"); Rules[0].AddLast("compoundstmt");
             Rules[1]  = new LinkedList<string>(); Rules[1] .AddLast("stmt"); Rules[1].AddLast("ifstmt");
@@ -105,7 +105,7 @@ namespace compiler
             stackReset();
         }
 
-        static private void stackReset()
+        static private void stackReset()    //重置语法栈初始状态，只有 $和program
         {
             Stack.Clear();
             Stack.Push("$");
@@ -113,12 +113,12 @@ namespace compiler
 
         }
 
-        static public void loopReset()
+        static public void loopReset()      //初始化跳转标签
         {
             loopNum = 1;
         }
         
-        static public void reset()
+        static public void reset()  //所有状态初始化
         {
             stackReset();
             loopNum = 1;
@@ -128,32 +128,32 @@ namespace compiler
             root = null;
         }
 
-        static public void pushStack (int rulesNo)
+        static public void pushStack (int rulesNo)  //把rulesNo的文法压栈
         {
             pushNode(Rules[rulesNo].First.Next);
         }
 
-        static private double stringValue(string str)
+        static private double stringValue(string str)   //把string变成double值
         {
             return Convert.ToDouble(str);
         }
 
-        static private string newLabel()
+        static private string newLabel()    //返回一个新的跳转标签如L1
         {
             return "L" + loopNum++;
         }
 
-        private static string gen(string op, string result, string para1, string para2)
+        private static string gen(string op, string result, string para1, string para2) //三地址代码的生成函数，参数为命令和操作元
         {
             return "   " + op + "\t" + result + "," + para1 + "," + para2 + "\r";
         }
 
-        private static string gen(string lable)
+        private static string gen(string lable) //生成三地址的跳转标签
         {
             return lable + ":\r";
         }
 
-        private static string numberType(string type1, string type2)
+        private static string numberType(string type1, string type2)    //用于类型检查，都为int则返回int，有一个为real返回real，否则返回空
         {
             if(type1 == "int" && type2 == "int")
             {
@@ -170,33 +170,33 @@ namespace compiler
         }
 
 
-        public static void ergodic(SytaxNode node)
+        public static void ergodic(SytaxNode node)  //递归，用于遍历语法树，进行语义分析
         {
-            if (node.NextNode != null)
+            if (node.NextNode != null)  //同级节点还有没遍历的
             {
-                ((SytaxNode)node.NextNode).Before = node;
+                ((SytaxNode)node.NextNode).Before = node;   //完成before节点的建立
             }
-            if (node.FirstNode != null)
+            if (node.FirstNode != null) //如果有子节点
             {
                 node.NodeList = new List<SytaxNode>();
                 SytaxNode childNode = (SytaxNode)node.FirstNode;
-                while (childNode.NextNode != null)
+                while (childNode.NextNode != null)  //NodeList用于存放子节点childnode
                 {
                     node.NodeList.Add(childNode);
                     childNode = (SytaxNode)childNode.NextNode;
                 }
                 node.NodeList.Add(childNode);
-                LLparser.inherit(node, node.State);
-                foreach (SytaxNode ergodicNode in node.NodeList)
+                LLparser.inherit(node, node.State); //进行继承属性语义分析
+                foreach (SytaxNode ergodicNode in node.NodeList)    //前序遍历
                 {
                     ergodic(ergodicNode);
                 }
-                LLparser.synthetical(node, node.State);
+                LLparser.synthetical(node, node.State); //综合属性分析
             }
             return;
         }
 
-        static public void inherit(SytaxNode node, int state)
+        static public void inherit(SytaxNode node, int state)   //继承属性代码定义，根据给出的文法用不到，保留接口
         {
             switch(state)
             {
@@ -259,9 +259,9 @@ namespace compiler
             }
         }
 
-        static public void synthetical(SytaxNode node, int state)
+        static public void synthetical(SytaxNode node, int state)   //综合属性代码定义
         {
-            switch (state)
+            switch (state)  //state为非终结符展开时根据的第几条文法规则
             {
                 case 0:
                     node.Code = node.NodeList[0].Code;
@@ -475,7 +475,7 @@ namespace compiler
 
         }
 
-        static private void pushNode(LinkedListNode<string> node)
+        static private void pushNode(LinkedListNode<string> node)   //倒序压栈
         {
             if (node.Next != null)
             {
@@ -484,7 +484,7 @@ namespace compiler
             stack.Push(node.Value);
         }
 
-        static public bool isTerminator(string type)
+        static public bool isTerminator(string type)    //判断是否为终结符
         {
             for(int i=0;i<Rules.Length;i++){
                 if (type == Rules[i].First.Value)
@@ -495,16 +495,16 @@ namespace compiler
             return true;
         }
 
-        static private void createTable(){
-            for (int i = 0; i < Rules.Length; i++)
+        static private void createTable(){  //创建语法分析预测表
+            for (int i = 0; i < Rules.Length; i++)  //对于每条文法
             {
-                string terminator = Rules[i].First.Value;
+                string terminator = Rules[i].First.Value;   //所有的非终结符建立行
                 if (!table.ContainsKey(terminator))
                 {
                     table.Add(terminator,new Dictionary<string,int>());
                 }
                 HashSet<string> firstSymbols = first(Rules[i].First.Next.Value);
-                foreach(string symbol in firstSymbols){
+                foreach(string symbol in firstSymbols){ //first中有的符号把文法序号填入表中
                     if (symbol != "")
                     {
                         if(!table[terminator].ContainsKey(symbol))
@@ -626,24 +626,10 @@ namespace compiler
                     }
                     else
                     {
-                        //MessageBox.Show("Wrong token type!");
                         beforeIsWrong = true;
                         return -2;
                     }
                 }
-                //if(stack.Count != 3 && hasNextToken == true && token.Attributevalue == "}")
-                //{
-                //    List<string> error = new List<string>();
-                //    error.Add(token.Linenumber.ToString());
-                //    error.Add(token.Lineposition.ToString());
-                //    error.Add(token.Tokentype);
-                //    error.Add("Program doesn't mean to end");
-                //    error.Add(token.Attributevalue.Length.ToString());
-                //    error.Add(beforeIsWrong.ToString());
-                //    errorList.Add(error);
-                //    beforeIsWrong = true;
-                //    return -1;
-                //}
                 if (LLparser.isTerminator(symbol))
                 {
                     SytaxNode newNode = new SytaxNode(symbol);
