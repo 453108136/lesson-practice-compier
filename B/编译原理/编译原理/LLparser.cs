@@ -512,7 +512,7 @@ namespace compiler
                             table[terminator].Add(symbol, i);
                         }
                     }
-                    else
+                    else    //如果没有first则把follow放进表项中
                     {
                         HashSet<string> followSymbols = follow(terminator);
                         foreach(string followSymbol in followSymbols)
@@ -527,15 +527,15 @@ namespace compiler
             }
         }
 
-        static private HashSet<string> first(string symbol)
+        static private HashSet<string> first(string symbol) //计算first
         {
             HashSet<string> firstSymbols = new HashSet<string>();
-            if (isTerminator(symbol))
+            if (isTerminator(symbol))   //如果是终结符，则放入自己的first中
             {
                 firstSymbols.Add(symbol);
                 return firstSymbols;
             }
-            else
+            else    //非终结符则返回第一个符号的follow
             {
                 for(int i = 0; i<Rules.Length; i++)
                 {
@@ -544,7 +544,7 @@ namespace compiler
                     {
                         LinkedListNode<string> node = Rules[i].First;
                         HashSet<string> nodeFirstSymbols = null;
-                        while (node.Next != null && (nodeFirstSymbols == null || nodeFirstSymbols.Contains("") ))
+                        while (node.Next != null && (nodeFirstSymbols == null || nodeFirstSymbols.Contains("") ))   //如果第一个first可以为空，计算到第一个不能为空的
                         {
                             node = node.Next;
                             nodeFirstSymbols = first(node.Value);
@@ -556,14 +556,14 @@ namespace compiler
             return firstSymbols;
         }
 
-        static private HashSet<string> follow(string symbol)
+        static private HashSet<string> follow(string symbol)    //计算follow
         {
             HashSet<string> followSymbols = new HashSet<string>();
             if (symbol == "program")
             {
                 followSymbols.Add("$");
             }
-            for (int i = 0; i < 28; i++)
+            for (int i = 0; i < 28; i++)    //计算所有该符号的follow
             {
                 LinkedListNode<string> node = Rules[i].First.Next;
                 while (true)
@@ -574,7 +574,7 @@ namespace compiler
                         HashSet<string> nextFirst = null;
                         do
                         {
-                            if (tempNode.Next == null)
+                            if (tempNode.Next == null) //如果没有下一个符号则包含左边非终结符的follow
                             {
                                 if (symbol != Rules[i].First.Value)
                                 {
@@ -585,12 +585,12 @@ namespace compiler
                             tempNode = tempNode.Next;
                             nextFirst = first(tempNode.Value);
                             followSymbols.UnionWith(nextFirst);
-                            if (followSymbols.Contains(""))
+                            if (followSymbols.Contains("")) //去除空
                             {
                                 followSymbols.Remove("");
                             }
                         }
-                        while (nextFirst.Contains(""));
+                        while (nextFirst.Contains("")); //如果下一个符号的first可以为空，则计算下下个
                     }
                     if (node.Next != null)
                     {
@@ -607,17 +607,17 @@ namespace compiler
 
         static public int sytaxAnalyse(object sender, EventArgs e)//语法分析 返回分析结果 -1：错误 -2：错误并分析结束 0：正确 1：正确的结尾
         {
-            if (token != null && token.Tokentype != "error")
+            if (token != null && token.Tokentype != "error")    //过滤词法错误
             {
 
-                string symbol = LLparser.Stack.Peek();
-                while (symbol == "///")
+                string symbol = LLparser.Stack.Peek();  //栈顶符号
+                while (symbol == "///") //弹出“///”用于语法树的生成
                 {
                     LLparser.Stack.Pop();
                     treeStack.Pop();
                     symbol = LLparser.Stack.Peek();
                 }
-                if (symbol == "$")
+                if (symbol == "$")  //如果栈顶元素为$检测是完成还是错误
                 {
                     if (hasNextToken == false)
                     {
@@ -630,25 +630,25 @@ namespace compiler
                         return -2;
                     }
                 }
-                if (LLparser.isTerminator(symbol))
+                if (LLparser.isTerminator(symbol))  //如果栈顶符号是终结符
                 {
-                    SytaxNode newNode = new SytaxNode(symbol);
-                    if (token.Tokentype == "int" || token.Tokentype == "real")
+                    SytaxNode newNode = new SytaxNode(symbol);  
+                    if (token.Tokentype == "int" || token.Tokentype == "real")  //如果类型是数字，则赋值
                     {
                         newNode.Value = token.Attributevalue;
                     }
                     else
                     {
-                        if (token.Tokentype == "identifier")
+                        if (token.Tokentype == "identifier")    //如果是标识符，则赋值id
                         {
                             newNode.Id = token.Attributevalue;
                         }
                     }
                     treeStack.Peek().Nodes.Add(newNode);
                     LLparser.Stack.Pop();
-                    if (symbol != token.Tokentype)
+                    if (symbol != token.Tokentype)  //如果预测分析有问题
                     {
-                        List<string> error = new List<string>();
+                        List<string> error = new List<string>();    //在error里加一条
                         error.Add(token.Linenumber.ToString());
                         error.Add(token.Lineposition.ToString());
                         error.Add(token.Tokentype);
@@ -657,37 +657,37 @@ namespace compiler
                         error.Add(beforeIsWrong.ToString());
                         errorList.Add(error);
                         symbol = LLparser.Stack.Peek();
-                        while (symbol != "stmts" && hasNextToken == true)
+                        while (symbol != "stmts" && hasNextToken == true)   //把栈弹到剩stmts，放弃这一句
                         {
                             newNode = new SytaxNode(symbol);
                             treeStack.Peek().Nodes.Add(newNode);
                             LLparser.Stack.Pop();
                             symbol = LLparser.Stack.Peek();
-                            while (symbol == "///")
+                            while (symbol == "///") //弹栈“///”
                             {
                                 LLparser.Stack.Pop();
                                 treeStack.Pop();
                                 symbol = LLparser.Stack.Peek();
                             }
                         }
-                        if (hasNextToken == false)
+                        if (hasNextToken == false)  //如果结束了返回-2
                         {
                             beforeIsWrong = true;
                             return -2;
                         }
-                        beforeIsWrong = true;
+                        beforeIsWrong = true;   //如果没有结束返回-1
                         return -1;
                     }
                 }
-                else
+                else    //如果栈顶为非终结符
                 {
 
-                    while (!isTerminator(symbol))
+                    while (!isTerminator(symbol))   //当不是非终结符的时候循环
                     {
-                        if (Table[symbol].ContainsKey(token.Tokentype))
+                        if (Table[symbol].ContainsKey(token.Tokentype)) //如果成功预测
                         {
                             SytaxNode newNode = new SytaxNode(symbol);
-                            if (treeStack.Count == 0)
+                            if (treeStack.Count == 0)   //如果是第一个节点
                             {
                                 treeStack.Push(newNode);
                                 root = treeStack.Peek();
@@ -697,12 +697,12 @@ namespace compiler
                                 treeStack.Peek().Nodes.Add(newNode);
                                 treeStack.Push(newNode);
                             }
-                            LLparser.Stack.Pop();
-                            LLparser.Stack.Push("///");
+                            LLparser.Stack.Pop();   //展开非终结符，把栈顶弹出
+                            LLparser.Stack.Push("///"); //插入“///”入栈
                             newNode.State = LLparser.Table[symbol][token.Tokentype];
-                            LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);
+                            LLparser.pushStack(LLparser.Table[symbol][token.Tokentype]);    //展开的非终结符压栈
                             symbol = LLparser.Stack.Peek();
-                            if (symbol == "")
+                            if (symbol == "")   //如果栈顶为空，把“”“///”弹栈
                             {
                                 newNode = new SytaxNode(symbol);
                                 treeStack.Peek().Nodes.Add(newNode);
@@ -715,7 +715,7 @@ namespace compiler
                                     symbol = LLparser.Stack.Peek();
                                 }
                             }
-                            else
+                            else    //把“”“///”弹栈
                             {
                                 while (symbol == "///")
                                 {
@@ -725,7 +725,7 @@ namespace compiler
                                 }
                             }
                         }
-                        else
+                        else    // 如果预测失败
                         {
                             List<string> error = new List<string>();
                             error.Add(token.Linenumber.ToString());
@@ -736,12 +736,12 @@ namespace compiler
                             error.Add(beforeIsWrong.ToString());
                             errorList.Add(error);
                             symbol = LLparser.Stack.Peek();
-                            if (token.Tokentype == "}")
+                            if (token.Tokentype == "}") //如果是}错误，return-1
                             {
                                 beforeIsWrong = true;
                                 return -1;
                             }
-                            while (symbol != "stmts" && hasNextToken == true)
+                            while (symbol != "stmts" && hasNextToken == true)   //弹出整句
                             {
                                 SytaxNode newNode = new SytaxNode(symbol);
                                 treeStack.Peek().Nodes.Add(newNode);
@@ -753,29 +753,29 @@ namespace compiler
                                     treeStack.Pop();
                                     symbol = LLparser.Stack.Peek();
                                 }
-                                if (symbol == "$")
+                                if (symbol == "$")  //如果栈空了，报错结束
                                 {
                                     beforeIsWrong = true;
                                     return -2;
                                 }
                             }
-                            if (hasNextToken == false)
+                            if (hasNextToken == false)  //如果词法分析结束，报错结束
                             {
                                 beforeIsWrong = true;
                                 return -2;
-                            }
+                            }   
                             beforeIsWrong = true;
                             return -1;
                         }
                     }
                     SytaxNode lastNode = new SytaxNode(symbol);
-                    if (token.Tokentype == "int" || token.Tokentype == "real")
+                    if (token.Tokentype == "int" || token.Tokentype == "real") //如果token是数字类型
                     {
-                        lastNode.Value = token.Attributevalue;
+                        lastNode.Value = token.Attributevalue;//赋值
                     }
                     else
                     {
-                        if (token.Tokentype == "identifier")
+                        if (token.Tokentype == "identifier")//如果是标示符
                         {
                             lastNode.Id = token.Attributevalue;
                         }
