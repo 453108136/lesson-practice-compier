@@ -415,10 +415,10 @@ namespace compiler
             errorView.View = View.Details;
             errorView.HeaderStyle = ColumnHeaderStyle.Clickable;
             errorView.FullRowSelect = true;
-            LLerrorView.Columns.Add("lineNumber", 90);
-            LLerrorView.Columns.Add("linePosition", 90);
-            LLerrorView.Columns.Add("tokenType", 90);
-            LLerrorView.Columns.Add("expectTokenType", 90);
+            LLerrorView.Columns.Add("lineNumber", 30);
+            LLerrorView.Columns.Add("linePosition", 30);
+            LLerrorView.Columns.Add("tokenType", 70);
+            LLerrorView.Columns.Add("expectTokenType", 300);
             LLerrorView.GridLines = true;
             LLerrorView.View = View.Details;
             LLerrorView.HeaderStyle = ColumnHeaderStyle.Clickable;

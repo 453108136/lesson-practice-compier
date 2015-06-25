@@ -731,7 +731,19 @@ namespace compiler
                             error.Add(token.Linenumber.ToString());
                             error.Add(token.Lineposition.ToString());
                             error.Add(token.Tokentype);
-                            error.Add(Table[symbol].ToString());
+                            string expected = "";
+                            foreach (string s in Table[symbol].Keys)
+                            {
+                                if (expected != "")
+                                {
+                                    expected = s + " or " + expected;
+                                }
+                                else
+                                {
+                                    expected = s;
+                                }
+                            }
+                            error.Add(expected);
                             error.Add(token.Attributevalue.Length.ToString());
                             error.Add(beforeIsWrong.ToString());
                             errorList.Add(error);
